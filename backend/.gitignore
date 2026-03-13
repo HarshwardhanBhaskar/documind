@@ -1,0 +1,42 @@
+# ── Environment secrets (NEVER commit these) ──────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Python bytecode ───────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# ── Virtual environments ──────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+
+# ── ML model cache (can be huge — HuggingFace downloads) ─────────────────────
+.cache/
+*.pt
+*.bin
+/models/
+
+# ── EasyOCR model cache ───────────────────────────────────────────────────────
+~/.EasyOCR/
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Temp / uploaded files ─────────────────────────────────────────────────────
+uploads/
+tmp/
+*.tmp
+
+# ── OS files ──────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/

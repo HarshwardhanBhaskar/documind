@@ -1,0 +1,109 @@
+Error: Route "/docs/[slug]" used `params.slug`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at DocsPage (app\docs\[slug]\page.tsx:239:28)
+  237 |
+  238 | export default function DocsPage({ params }: { params: { slug: string } }) {
+> 239 |   const data = docs[params.slug];
+      |                            ^
+  240 |   if (!data) {
+  241 |     notFound();
+  242 |   }
+Error: Route "/docs/[slug]" used `params.slug`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Module.generateMetadata (app\docs\[slug]\page.tsx:224:28)
+  222 |
+  223 | export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+> 224 |   const data = docs[params.slug];
+      |                            ^
+  225 |   if (!data) {
+  226 |     return {
+  227 |       title: 'Documentation Not Found | DocuMind',
+Error: Route "/docs/[slug]" used `params.slug`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at DocsPage (app\docs\[slug]\page.tsx:239:28)
+  237 |
+  238 | export default function DocsPage({ params }: { params: { slug: string } }) {
+> 239 |   const data = docs[params.slug];
+      |                            ^
+  240 |   if (!data) {
+  241 |     notFound();
+  242 |   }
+Error: Route "/docs/[slug]" used `params.slug`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Module.generateMetadata (app\docs\[slug]\page.tsx:224:28)
+  222 |
+  223 | export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+> 224 |   const data = docs[params.slug];
+      |                            ^
+  225 |   if (!data) {
+  226 |     return {
+  227 |       title: 'Documentation Not Found | DocuMind',
+Error: Route "/[slug]" used `params.slug`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at CompanyPage (app\[slug]\page.tsx:293:29)
+  291 |
+  292 | export default function CompanyPage({ params }: { params: { slug: string } }) {
+> 293 |   const data = pages[params.slug];
+      |                             ^
+  294 |   if (!data) {
+  295 |     notFound();
+  296 |   }
+Error: Route "/[slug]" used `params.slug`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Module.generateMetadata (app\[slug]\page.tsx:266:29)
+  264 |
+  265 | export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+> 266 |   const data = pages[params.slug];
+      |                             ^
+  267 |   if (!data) {
+  268 |     return {
+  269 |       title: 'Page Not Found | DocuMind',
+Error: Route "/[slug]" used `params.slug`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at CompanyPage (app\[slug]\page.tsx:293:29)
+  291 |
+  292 | export default function CompanyPage({ params }: { params: { slug: string } }) {
+> 293 |   const data = pages[params.slug];
+      |                             ^
+  294 |   if (!data) {
+  295 |     notFound();
+  296 |   }
+Error: Route "/[slug]" used `params.slug`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Module.generateMetadata (app\[slug]\page.tsx:266:29)
+  264 |
+  265 | export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+> 266 |   const data = pages[params.slug];
+      |                             ^
+  267 |   if (!data) {
+  268 |     return {
+  269 |       title: 'Page Not Found | DocuMind',
+Error: Route "/[slug]" used `params.slug`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at CompanyPage (app\[slug]\page.tsx:293:29)
+  291 |
+  292 | export default function CompanyPage({ params }: { params: { slug: string } }) {
+> 293 |   const data = pages[params.slug];
+      |                             ^
+  294 |   if (!data) {
+  295 |     notFound();
+  296 |   }
+Error: Route "/[slug]" used `params.slug`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Module.generateMetadata (app\[slug]\page.tsx:266:29)
+  264 |
+  265 | export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+> 266 |   const data = pages[params.slug];
+      |                             ^
+  267 |   if (!data) {
+  268 |     return {
+  269 |       title: 'Page Not Found | DocuMind',
+Error: Route "/docs/[slug]" used `params.slug`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at DocsPage (app\docs\[slug]\page.tsx:239:28)
+  237 |
+  238 | export default function DocsPage({ params }: { params: { slug: string } }) {
+> 239 |   const data = docs[params.slug];
+      |                            ^
+  240 |   if (!data) {
+  241 |     notFound();
+  242 |   }
+Error: Route "/docs/[slug]" used `params.slug`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Module.generateMetadata (app\docs\[slug]\page.tsx:224:28)
+  222 |
+  223 | export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+> 224 |   const data = docs[params.slug];
+      |                            ^
+  225 |   if (!data) {
+  226 |     return {
+  227 |       title: 'Documentation Not Found | DocuMind',
+^C^C
