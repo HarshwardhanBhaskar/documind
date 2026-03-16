@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, UploadCloud, File, Loader2, Download } from 'lucide-react';
 import { ApiError, processingApi, uploadApi, utilitiesApi } from '@/lib/api';
@@ -26,10 +26,30 @@ export default function ToolModal({ isOpen, onClose, tool, title, description }:
     const [resultPreview, setResultPreview] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [authOpen, setAuthOpen] = useState(false);
+    const [autoDownloaded, setAutoDownloaded] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const isAiTool = tool === 'ocr' || tool === 'ai' || tool === 'extract';
     const singleFileTool = tool !== 'merge' && tool !== 'compress';
+
+    useEffect(() => {
+        if (!resultBlob || autoDownloaded || isAiTool) return;
+
+        const url = URL.createObjectURL(resultBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = resultFilename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setAutoDownloaded(true);
+
+        const timeoutId = window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+        return () => {
+            window.clearTimeout(timeoutId);
+            URL.revokeObjectURL(url);
+        };
+    }, [autoDownloaded, isAiTool, resultBlob, resultFilename]);
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -38,6 +58,7 @@ export default function ToolModal({ isOpen, onClose, tool, title, description }:
             setError(null);
             setResultBlob(null);
             setResultPreview(null);
+            setAutoDownloaded(false);
         }
     };
 
@@ -49,6 +70,7 @@ export default function ToolModal({ isOpen, onClose, tool, title, description }:
             setError(null);
             setResultBlob(null);
             setResultPreview(null);
+            setAutoDownloaded(false);
         }
     };
 
@@ -87,6 +109,7 @@ export default function ToolModal({ isOpen, onClose, tool, title, description }:
         setIsProcessing(true);
         setError(null);
         setResultPreview(null);
+        setAutoDownloaded(false);
 
         try {
             let blob: Blob;
@@ -164,6 +187,7 @@ export default function ToolModal({ isOpen, onClose, tool, title, description }:
         setResultBlob(null);
         setResultPreview(null);
         setError(null);
+        setAutoDownloaded(false);
     };
 
     return (
