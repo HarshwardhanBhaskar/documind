@@ -202,6 +202,29 @@ class OcrService:
 
         return combined, None, page_count
 
+    async def extract_text_from_bytes(
+        self,
+        file_bytes: bytes,
+        filename: str,
+        content_type: str,
+    ) -> str:
+        """
+        Direct OCR helper for raw uploaded bytes, used by file-upload endpoints
+        that don't persist the document first.
+        """
+        normalized_type = (content_type or "").lower()
+        if normalized_type == "application/pdf" or filename.lower().endswith(".pdf"):
+            text, _confidence, _pages = self._ocr_pdf_bytes(file_bytes)
+            return text
+
+        if normalized_type.startswith("image/"):
+            text, _confidence = self._ocr_image_bytes(file_bytes)
+            return text
+
+        raise ValueError(
+            f"Unsupported file type '{content_type}' for OCR. Supported: PDF and common image formats."
+        )
+
     async def extract(
         self,
         document_id: UUID,

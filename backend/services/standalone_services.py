@@ -1,7 +1,11 @@
 import io
+import os
 import zipfile
-from pdf2image import convert_from_bytes
 from typing import Literal
+
+
+class PdfConversionUnavailableError(RuntimeError):
+    """Raised when the runtime cannot rasterize PDFs into images."""
 
 class StandaloneServices:
     def compress_files(self, file_streams: list[tuple[str, bytes]]) -> bytes:
@@ -19,8 +23,21 @@ class StandaloneServices:
         """
         Converts a PDF into a list of image byte arrays using pdf2image.
         """
-        # Convert PDF bytes to a list of PIL Images
-        images = convert_from_bytes(pdf_bytes)
+        try:
+            from pdf2image import convert_from_bytes  # type: ignore
+        except Exception as exc:  # pragma: no cover - import depends on runtime image libs
+            raise PdfConversionUnavailableError(
+                "PDF conversion runtime is unavailable. Install pdf2image and Poppler on the backend host."
+            ) from exc
+
+        poppler_path = os.getenv("POPPLER_PATH") or None
+        try:
+            images = convert_from_bytes(pdf_bytes, poppler_path=poppler_path)
+        except Exception as exc:
+            raise PdfConversionUnavailableError(
+                "PDF page rendering is unavailable in this environment. "
+                "Install Poppler or set POPPLER_PATH on the backend host."
+            ) from exc
         
         image_streams = []
         for img in images:

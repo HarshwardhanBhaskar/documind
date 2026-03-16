@@ -1,7 +1,7 @@
 from fastapi import APIRouter, File, UploadFile, HTTPException, status, Form
 from fastapi.responses import Response
 
-from services.standalone_services import get_standalone_services
+from services.standalone_services import PdfConversionUnavailableError, get_standalone_services
 
 router = APIRouter(prefix="/utilities", tags=["Utilities"])
 
@@ -52,8 +52,10 @@ async def convert_pdf(
 
     try:
         image_streams = service.convert_pdf_to_images(content, format=output_format)
+    except PdfConversionUnavailableError as e:
+        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, str(e)) from e
     except Exception as e:
-        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, f"Error converting PDF: {e}")
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, f"Error converting PDF: {e}") from e
 
     # Zip the images back together
     file_tuples = []

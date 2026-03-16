@@ -117,8 +117,8 @@ async def classify_from_file(
 
     # Run OCR to get text
     try:
-        from services.ocr_service import OCRService
-        ocr = OCRService()
+        from services.ocr_service import OcrService
+        ocr = OcrService()
         text = await ocr.extract_text_from_bytes(
             file_bytes=file_bytes,
             filename=file.filename or "document",

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileText, Zap, Menu, X, ChevronRight, LogOut } from 'lucide-react';
@@ -7,10 +8,10 @@ import { useAuth } from '@/context/AuthContext';
 import AuthModal from '@/components/AuthModal';
 
 const LINKS = [
-    { label: 'Features', href: '#features' },
-    { label: 'Tools', href: '#tools' },
-    { label: 'AI Demo', href: '#demo' },
-    { label: 'Pricing', href: '#pricing' },
+    { label: 'Features', href: '/#features' },
+    { label: 'Tools', href: '/#tools' },
+    { label: 'AI Demo', href: '/#demo' },
+    { label: 'Pricing', href: '/pricing' },
 ];
 
 export default function Navbar() {
@@ -59,13 +60,13 @@ export default function Navbar() {
                 <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
 
                     {/* Logo */}
-                    <a href="#" className="flex items-center gap-2.5 group shrink-0" aria-label="DocuMind">
+                    <a href="#" className="flex items-center gap-2.5 group shrink-0" aria-label="NeuroDocs">
                         <div className="w-9 h-9 rounded-xl flex items-center justify-center"
                             style={{ background: 'linear-gradient(135deg,#6366F1,#A78BFA)', boxShadow: '0 0 14px rgba(99,102,241,0.35)' }}>
                             <FileText className="w-[18px] h-[18px] text-white" />
                         </div>
                         <span className="font-black text-[1.1rem] tracking-tight text-white">
-                            Docu<span className="gradient-text">Mind</span>
+                            Neuro<span className="gradient-text">Docs</span>
                         </span>
                     </a>
 
@@ -125,6 +126,10 @@ export default function Navbar() {
                                                     <p className="text-xs font-semibold text-white truncate">{fullName ?? 'User'}</p>
                                                     <p className="text-[10px] mt-0.5 truncate" style={{ color: 'rgba(255,255,255,0.35)' }}>{user?.email}</p>
                                                 </div>
+                                                <Link href="/dashboard" className="w-full flex items-center gap-2 px-4 py-3 text-xs font-medium transition-colors hover:bg-white/5" style={{ color: 'rgba(241,245,249,0.75)' }}>
+                                                    <FileText className="w-3.5 h-3.5 text-indigo-400" />
+                                                    Dashboard
+                                                </Link>
                                                 <button
                                                     onClick={() => { logout(); setUserMenuOpen(false); }}
                                                     className="w-full flex items-center gap-2 px-4 py-3 text-xs font-medium transition-colors hover:bg-white/5"

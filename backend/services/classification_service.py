@@ -120,7 +120,7 @@ class ClassificationService:
         # Slow path: zero-shot classification
         pipe = self._get_pipeline()
         if pipe is not None:
-            candidate_labels = [t for t, _ in KEYWORD_RULES] + ["Other"]
+            candidate_labels = [t for t, _ in _KEYWORD_RULES] + ["Other"]
             # Truncate to the first 1 000 characters for speed
             snippet = text[:1000]
             try:
