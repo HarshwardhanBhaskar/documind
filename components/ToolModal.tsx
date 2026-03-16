@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, UploadCloud, File, Loader2, Download } from 'lucide-react';
 import { ApiError, processingApi, uploadApi, utilitiesApi } from '@/lib/api';
@@ -26,30 +26,10 @@ export default function ToolModal({ isOpen, onClose, tool, title, description }:
     const [resultPreview, setResultPreview] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [authOpen, setAuthOpen] = useState(false);
-    const [autoDownloaded, setAutoDownloaded] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const isAiTool = tool === 'ocr' || tool === 'ai' || tool === 'extract';
     const singleFileTool = tool !== 'merge' && tool !== 'compress';
-
-    useEffect(() => {
-        if (!resultBlob || autoDownloaded || isAiTool) return;
-
-        const url = URL.createObjectURL(resultBlob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = resultFilename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        setAutoDownloaded(true);
-
-        const timeoutId = window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-        return () => {
-            window.clearTimeout(timeoutId);
-            URL.revokeObjectURL(url);
-        };
-    }, [autoDownloaded, isAiTool, resultBlob, resultFilename]);
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -58,7 +38,6 @@ export default function ToolModal({ isOpen, onClose, tool, title, description }:
             setError(null);
             setResultBlob(null);
             setResultPreview(null);
-            setAutoDownloaded(false);
         }
     };
 
@@ -70,7 +49,6 @@ export default function ToolModal({ isOpen, onClose, tool, title, description }:
             setError(null);
             setResultBlob(null);
             setResultPreview(null);
-            setAutoDownloaded(false);
         }
     };
 
@@ -109,7 +87,6 @@ export default function ToolModal({ isOpen, onClose, tool, title, description }:
         setIsProcessing(true);
         setError(null);
         setResultPreview(null);
-        setAutoDownloaded(false);
 
         try {
             let blob: Blob;
@@ -119,12 +96,24 @@ export default function ToolModal({ isOpen, onClose, tool, title, description }:
             if (tool === 'merge') {
                 blob = await utilitiesApi.merge(files, token ?? undefined);
                 filename = 'merged_document.pdf';
+                downloadBlob(blob, filename);
+                reset();
+                onClose();
+                return;
             } else if (tool === 'compress') {
                 blob = await utilitiesApi.compress(files, token ?? undefined);
                 filename = 'compressed_archive.zip';
+                downloadBlob(blob, filename);
+                reset();
+                onClose();
+                return;
             } else if (tool === 'convert') {
                 blob = await utilitiesApi.convertPdf(files[0], 'png', token ?? undefined);
                 filename = 'converted_images.zip';
+                downloadBlob(blob, filename);
+                reset();
+                onClose();
+                return;
             } else if (tool === 'ocr') {
                 const doc = await uploadApi.upload(files[0], token as string);
                 const ocr = await processingApi.ocr(doc.id, token as string);
@@ -187,7 +176,17 @@ export default function ToolModal({ isOpen, onClose, tool, title, description }:
         setResultBlob(null);
         setResultPreview(null);
         setError(null);
-        setAutoDownloaded(false);
+    };
+
+    const downloadBlob = (blob: Blob, filename: string) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     };
 
     return (

@@ -1,12 +1,13 @@
 /**
  * lib/api.ts
  * ──────────────────────────────────────────────────────────────────────────
- * Typed API client for the DocuMind FastAPI backend.
+ * Typed API client for the NeuroDocs FastAPI backend.
  * All functions read NEXT_PUBLIC_API_URL from the environment.
  */
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+const BASE_URL = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000').replace(/\/+$/, '');
 const REQUEST_TIMEOUT_MS = Number(process.env.NEXT_PUBLIC_API_TIMEOUT_MS ?? '180000');
+const UTILITY_REQUEST_TIMEOUT_MS = Number(process.env.NEXT_PUBLIC_UTILITY_API_TIMEOUT_MS ?? '240000');
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -142,11 +143,79 @@ class ApiError extends Error {
     }
 }
 
+function isLocalApiUrl(url: string): boolean {
+    return /https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(url);
+}
+
+function assertReachableApi() {
+    if (typeof window === 'undefined') return;
+
+    const frontendHost = window.location.hostname;
+    const frontendIsLocal = frontendHost === 'localhost' || frontendHost === '127.0.0.1';
+
+    if (!frontendIsLocal && isLocalApiUrl(BASE_URL)) {
+        throw new ApiError(
+            503,
+            'Frontend is deployed, but NEXT_PUBLIC_API_URL still points to localhost. Deploy the backend publicly and set NEXT_PUBLIC_API_URL to that HTTPS URL.',
+        );
+    }
+}
+
+function getApiUrl(path: string): string {
+    assertReachableApi();
+    return `${BASE_URL}${path}`;
+}
+
+async function fetchBlobWithTimeout(
+    path: string,
+    options: RequestInit = {},
+): Promise<Blob> {
+    assertReachableApi();
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), UTILITY_REQUEST_TIMEOUT_MS);
+
+    try {
+        const res = await fetch(getApiUrl(path), {
+            ...options,
+            signal: controller.signal,
+        });
+
+        if (!res.ok) {
+            let message = `HTTP ${res.status}`;
+            try {
+                const err = await res.json();
+                message = err.detail ?? err.message ?? message;
+            } catch {
+                /* ignore parse error */
+            }
+            throw new ApiError(res.status, message);
+        }
+
+        return res.blob();
+    } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') {
+            throw new ApiError(408, `Utility request timed out after ${Math.round(UTILITY_REQUEST_TIMEOUT_MS / 1000)}s`);
+        }
+        if (error instanceof TypeError) {
+            throw new ApiError(
+                503,
+                `Could not reach backend at ${BASE_URL}. Check that the backend is publicly deployed and that CORS allows your frontend domain.`,
+            );
+        }
+        throw error;
+    } finally {
+        clearTimeout(timeoutId);
+    }
+}
+
 async function apiFetch<T>(
     path: string,
     options: RequestInit = {},
     token?: string,
 ): Promise<T> {
+    assertReachableApi();
+
     const headers: Record<string, string> = {
         ...(options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -157,7 +226,7 @@ async function apiFetch<T>(
     const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
     let res: Response;
     try {
-        res = await fetch(`${BASE_URL}${path}`, {
+        res = await fetch(getApiUrl(path), {
             ...options,
             headers,
             signal: controller.signal,
@@ -165,6 +234,12 @@ async function apiFetch<T>(
     } catch (error) {
         if (error instanceof DOMException && error.name === 'AbortError') {
             throw new ApiError(408, `Request timed out after ${Math.round(REQUEST_TIMEOUT_MS / 1000)}s`);
+        }
+        if (error instanceof TypeError) {
+            throw new ApiError(
+                503,
+                `Could not reach backend at ${BASE_URL}. Check that the backend is publicly deployed and that CORS allows your frontend domain.`,
+            );
         }
         throw error;
     } finally {
@@ -290,28 +365,23 @@ export const utilitiesApi = {
     merge: async (files: File[], token?: string) => {
         const form = new FormData();
         files.forEach(f => form.append('files', f));
-        // We handle binary Blobs manually instead of JSON
         const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
-        const res = await fetch(`${BASE_URL}/utilities/merge-pdfs`, {
+        return fetchBlobWithTimeout('/utilities/merge-pdfs', {
             method: 'POST',
             body: form,
             headers,
         });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.blob();
     },
 
     compress: async (files: File[], token?: string) => {
         const form = new FormData();
         files.forEach(f => form.append('files', f));
         const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
-        const res = await fetch(`${BASE_URL}/utilities/compress`, {
+        return fetchBlobWithTimeout('/utilities/compress', {
             method: 'POST',
             body: form,
             headers,
         });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.blob();
     },
 
     convertPdf: async (file: File, format: 'png' | 'jpeg', token?: string) => {
@@ -319,13 +389,11 @@ export const utilitiesApi = {
         form.append('file', file);
         form.append('output_format', format);
         const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
-        const res = await fetch(`${BASE_URL}/utilities/convert-pdf`, {
+        return fetchBlobWithTimeout('/utilities/convert-pdf', {
             method: 'POST',
             body: form,
             headers,
         });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.blob();
     },
 };
 
