@@ -164,19 +164,58 @@ def _extract(text: str, doc_type: str) -> dict[str, Any]:
 async def smart_classify_text(text: str) -> dict[str, Any]:
     """
     Run the full classify → extract pipeline on already-extracted text.
+    Uses keyword rules first, then falls back to Gemini AI for better accuracy.
     
     Returns:
         {
             "document_type": str,
             "confidence": float,
-            "fields": dict
+            "fields": dict,
+            "summary": str | None
         }
     """
+    # Step 1: Try keyword classification first (fast, free)
     doc_type, confidence = _classify(text)
-    fields = _extract(text, doc_type)
+
+    # Step 2: If keywords aren't confident enough, ask Gemini
+    if confidence < 0.6:
+        try:
+            from services.gemini_service import gemini_classify
+            gemini_result = await gemini_classify(text)
+            if gemini_result and gemini_result.get("document_type"):
+                doc_type = gemini_result["document_type"]
+                confidence = float(gemini_result.get("confidence", 0.85))
+                logger.info("Smart classify used Gemini: %s (%.2f)", doc_type, confidence)
+        except Exception as exc:
+            logger.warning("Gemini classify fallback failed: %s", exc)
+
+    # Step 3: Extract fields – try Gemini first, then regex fallback
+    fields = {}
+    try:
+        from services.gemini_service import gemini_extract_fields
+        gemini_fields = await gemini_extract_fields(text, doc_type)
+        if gemini_fields:
+            fields = gemini_fields
+            logger.info("Smart classify used Gemini extraction: %d fields", len(fields))
+    except Exception as exc:
+        logger.warning("Gemini extraction fallback failed: %s", exc)
+
+    # If Gemini didn't return fields, use regex
+    if not fields:
+        fields = _extract(text, doc_type)
+
+    # Step 4: Try to get a summary from Gemini
+    summary = None
+    try:
+        from services.gemini_service import gemini_summarize
+        summary = await gemini_summarize(text)
+    except Exception as exc:
+        logger.warning("Gemini summarization failed: %s", exc)
 
     return {
         "document_type": doc_type,
         "confidence": confidence,
         "fields": fields,
+        "summary": summary,
     }
+

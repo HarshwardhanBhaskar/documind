@@ -117,25 +117,22 @@ class ClassificationService:
                 suggested_tags=_build_tags(doc_type, text),
             )
 
-        # Slow path: zero-shot classification
-        pipe = self._get_pipeline()
-        if pipe is not None:
-            candidate_labels = [t for t, _ in _KEYWORD_RULES] + ["Other"]
-            # Truncate to the first 1 000 characters for speed
-            snippet = text[:1000]
-            try:
-                result = pipe(snippet, candidate_labels=candidate_labels)
-                doc_type   = result["labels"][0]
-                confidence = float(result["scores"][0])
-                logger.info("Classified by model: %s (%.2f)", doc_type, confidence)
+        # Slow path: Gemini AI classification
+        try:
+            from services.gemini_service import gemini_classify
+            gemini_result = await gemini_classify(text)
+            if gemini_result and gemini_result.get("document_type"):
+                doc_type = gemini_result["document_type"]
+                confidence = float(gemini_result.get("confidence", 0.85))
+                logger.info("Classified by Gemini: %s (%.2f)", doc_type, confidence)
                 return ClassificationResult(
                     document_id=document_id,
                     classified_type=doc_type,
                     confidence=round(confidence, 3),
                     suggested_tags=_build_tags(doc_type, text),
                 )
-            except Exception as e:
-                logger.warning("Model classification failed: %s", e)
+        except Exception as e:
+            logger.warning("Gemini classification failed: %s", e)
 
         # Fallback
         return ClassificationResult(

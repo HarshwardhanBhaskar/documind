@@ -118,6 +118,7 @@ class ExtractionService:
     ) -> ExtractionResult:
         """
         Run field extraction on `text` for the given `document_type`.
+        Tries Gemini AI first, then falls back to regex patterns.
         Returns an ExtractionResult with a dict of found fields.
         """
         logger.info(
@@ -127,19 +128,31 @@ class ExtractionService:
 
         fields: dict[str, Any] = {}
 
-        # Type-specific extractors
-        extractors = _EXTRACTORS.get(document_type, [])
-        for field_name, pattern in extractors:
-            value = _regex_extract(pattern, text)
-            if value:
-                fields[field_name] = value.strip()
+        # Try Gemini AI extraction first (much more accurate)
+        try:
+            from services.gemini_service import gemini_extract_fields
+            gemini_fields = await gemini_extract_fields(text, document_type)
+            if gemini_fields:
+                fields = {k: v for k, v in gemini_fields.items() if v}
+                logger.info("Extraction via Gemini: %d fields", len(fields))
+        except Exception as exc:
+            logger.warning("Gemini extraction failed, falling back to regex: %s", exc)
 
-        # Generic extractors (fill in gaps)
-        for field_name, pattern in _GENERIC_EXTRACTORS:
-            if field_name not in fields:
+        # Fallback to regex if Gemini didn't return fields
+        if not fields:
+            # Type-specific extractors
+            extractors = _EXTRACTORS.get(document_type, [])
+            for field_name, pattern in extractors:
                 value = _regex_extract(pattern, text)
                 if value:
                     fields[field_name] = value.strip()
+
+            # Generic extractors (fill in gaps)
+            for field_name, pattern in _GENERIC_EXTRACTORS:
+                if field_name not in fields:
+                    value = _regex_extract(pattern, text)
+                    if value:
+                        fields[field_name] = value.strip()
 
         # Deduplicate list-type values
         fields = {k: v for k, v in fields.items() if v}
