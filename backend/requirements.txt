@@ -16,12 +16,14 @@ pdf2image==1.17.0
 pypdf==4.2.0
 
 # ── OCR ────────────────────────────────────────────
-easyocr==1.7.1
-numpy<2
+# NOTE: easyocr + torch removed to fit Render free-tier 512 MB RAM.
+# The OCR service gracefully falls back to pypdf text extraction.
+# To re-enable full OCR locally: pip install easyocr==1.7.1 numpy<2 torch==2.3.0
 
-# ── AI / NLP (lightweight; swap for OpenAI if preferred) ──
-transformers==4.40.2
-torch==2.3.0
+# ── AI / NLP ───────────────────────────────────────
+# NOTE: transformers + torch removed to fit Render free-tier 512 MB RAM.
+# Classification uses fast keyword rules by default.
+# To re-enable zero-shot locally: pip install transformers==4.40.2 torch==2.3.0
 
 # ── Data validation ─────────────────────────────────
 pydantic==2.7.1
@@ -35,4 +37,3 @@ httpx==0.27.0
 
 # ── Dev tooling (optional) ──────────────────────────
 pytest==8.2.0
-httpx==0.27.0          # also serves as test client
