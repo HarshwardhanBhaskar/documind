@@ -1,5 +1,5 @@
 """
-OCR service using EasyOCR with PDF rendering via pdf2image.
+OCR service using pypdf for digital PDFs and Gemini Vision for images/scanned docs.
 
 Supported inputs:
 - PDF
@@ -10,7 +10,6 @@ import io
 import logging
 import os
 import re
-from typing import Any
 from urllib.parse import unquote, urlparse
 from uuid import UUID
 
@@ -24,50 +23,12 @@ from database.supabase_client import service_supabase
 logger = logging.getLogger(__name__)
 _BUCKET = os.getenv("SUPABASE_BUCKET", "documents")
 
-_EASYOCR_MODULE: Any | None = None
-_EASYOCR_IMPORT_ERROR: Exception | None = None
-_EASYOCR_IMPORT_ATTEMPTED = False
-
-
-def _load_easyocr_module() -> Any | None:
-    """Lazily import EasyOCR only when OCR is actually requested."""
-    global _EASYOCR_MODULE, _EASYOCR_IMPORT_ERROR, _EASYOCR_IMPORT_ATTEMPTED
-
-    if _EASYOCR_IMPORT_ATTEMPTED:
-        return _EASYOCR_MODULE
-
-    _EASYOCR_IMPORT_ATTEMPTED = True
-    try:
-        import easyocr  # type: ignore
-
-        _EASYOCR_MODULE = easyocr
-        _EASYOCR_IMPORT_ERROR = None
-    except Exception as exc:  # pragma: no cover
-        _EASYOCR_MODULE = None
-        _EASYOCR_IMPORT_ERROR = exc
-
-    return _EASYOCR_MODULE
-
 
 class OcrService:
-    """Wraps OCR initialization and exposes a single async extract method."""
+    """OCR service: pypdf for digital PDFs, Gemini Vision for images."""
 
     def __init__(self, languages: list[str] | None = None) -> None:
         self._languages = languages or ["en"]
-        self._reader: Any | None = None
-
-    def _get_reader(self):
-        easyocr_module = _load_easyocr_module()
-        if easyocr_module is None:
-            raise RuntimeError(
-                "EasyOCR is unavailable in this environment. "
-                f"Import error: {_EASYOCR_IMPORT_ERROR}"
-            )
-
-        if self._reader is None:
-            logger.info("Initializing EasyOCR reader (first call)...")
-            self._reader = easyocr_module.Reader(self._languages, gpu=False)
-        return self._reader
 
     def _extract_storage_path(self, url: str) -> str | None:
         """
@@ -114,75 +75,51 @@ class OcrService:
             response.raise_for_status()
             return response.content
 
-    def _ocr_image_bytes(self, image_bytes: bytes) -> tuple[str, float | None]:
-        """Run OCR on raw image bytes. Returns (text, average_confidence)."""
-        if _load_easyocr_module() is None:
-            raise ValueError(
-                "Image OCR unavailable because EasyOCR failed to load in this environment. "
-                f"Import error: {_EASYOCR_IMPORT_ERROR}"
-            )
-
-        reader = self._get_reader()
-        image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
-
-        results = reader.readtext(
-            image,
-            detail=1,       # returns [(bbox, text, confidence), ...]
-            paragraph=True,  # group text into paragraphs
-        )
-
-        texts: list[str] = []
-        confidences: list[float] = []
-        for (_bbox, text, conf) in results:
-            texts.append(text)
-            confidences.append(conf)
-
-        combined_text = "\n".join(texts)
-        avg_conf = sum(confidences) / len(confidences) if confidences else None
-        return combined_text, avg_conf
-
-    def _ocr_pdf_bytes(self, pdf_bytes: bytes) -> tuple[str, float | None, int]:
+    async def _ocr_image_bytes(self, image_bytes: bytes) -> tuple[str, float | None]:
         """
-        Convert each PDF page to an image and OCR it.
-        Returns (combined_text, average_confidence, page_count).
+        Run OCR on image bytes using Gemini Vision API.
+        Returns (text, confidence).
         """
-        if _load_easyocr_module() is None:
-            logger.warning(
-                "EasyOCR unavailable, using embedded-text PDF fallback only. "
-                "Scanned PDFs need a compatible OCR environment. Error: %s",
-                _EASYOCR_IMPORT_ERROR,
-            )
-            return self._extract_pdf_text_fallback(pdf_bytes)
-
-        from pdf2image import convert_from_bytes  # type: ignore
-
-        poppler_path = os.getenv("POPPLER_PATH") or None
         try:
-            images = convert_from_bytes(pdf_bytes, dpi=200, poppler_path=poppler_path)
+            api_key = os.getenv("GEMINI_API_KEY")
+            if not api_key:
+                raise ValueError("GEMINI_API_KEY not set — cannot OCR images without AI.")
+
+            import google.generativeai as genai
+
+            genai.configure(api_key=api_key)
+            model = genai.GenerativeModel("gemini-2.0-flash")
+
+            # Load image for Gemini
+            image = Image.open(io.BytesIO(image_bytes))
+
+            response = model.generate_content(
+                [
+                    "Extract ALL text from this image exactly as it appears. "
+                    "Preserve the layout, line breaks, and formatting as closely as possible. "
+                    "Do not add any commentary — return ONLY the extracted text.",
+                    image,
+                ]
+            )
+
+            text = response.text.strip() if response.text else ""
+            if text:
+                logger.info("Gemini Vision OCR extracted %d characters", len(text))
+                return text, 0.90  # Gemini is highly accurate
+            else:
+                raise ValueError("Gemini returned empty text for this image.")
+
         except Exception as exc:
-            logger.warning("PDF raster OCR unavailable, falling back to native text extraction: %s", exc)
-            return self._extract_pdf_text_fallback(pdf_bytes)
+            logger.warning("Gemini Vision OCR failed: %s", exc)
+            raise ValueError(
+                f"Image OCR failed: {exc}. "
+                "Ensure GEMINI_API_KEY is set for image text extraction."
+            ) from exc
 
-        all_text: list[str] = []
-        all_conf: list[float] = []
-
-        for page_image in images:
-            buf = io.BytesIO()
-            page_image.save(buf, format="PNG")
-            buf.seek(0)
-            text, conf = self._ocr_image_bytes(buf.read())
-            all_text.append(text)
-            if conf is not None:
-                all_conf.append(conf)
-
-        combined = "\n\n".join(all_text)
-        avg_conf = sum(all_conf) / len(all_conf) if all_conf else None
-        return combined, avg_conf, len(images)
-
-    def _extract_pdf_text_fallback(self, pdf_bytes: bytes) -> tuple[str, float | None, int]:
+    def _extract_pdf_text(self, pdf_bytes: bytes) -> tuple[str, float | None, int]:
         """
-        Fallback when raster OCR is unavailable:
-        extract embedded text directly from PDF.
+        Extract embedded text from PDF using pypdf.
+        For digital PDFs this is fast and accurate.
         """
         reader = PdfReader(io.BytesIO(pdf_bytes))
         page_count = len(reader.pages)
@@ -194,13 +131,38 @@ class OcrService:
                 chunks.append(text)
 
         combined = "\n\n".join(chunks).strip()
-        if not combined:
-            raise ValueError(
-                "Could not OCR this PDF: no embedded text found and OCR runtime is unavailable. "
-                "Install Poppler and a compatible EasyOCR stack for scanned PDFs."
-            )
-
         return combined, None, page_count
+
+    async def _ocr_pdf_bytes(self, pdf_bytes: bytes) -> tuple[str, float | None, int]:
+        """
+        Extract text from PDF. Tries pypdf first (fast), then falls back
+        to Gemini Vision for scanned/image PDFs.
+        """
+        # Try embedded text extraction first
+        text, confidence, page_count = self._extract_pdf_text(pdf_bytes)
+
+        if text and len(text.strip()) > 50:
+            logger.info("PDF text extracted via pypdf: %d chars, %d pages", len(text), page_count)
+            return text, confidence, page_count
+
+        # If pypdf got very little text, the PDF might be scanned → use Gemini
+        logger.info("PDF has little embedded text (%d chars), trying Gemini Vision...", len(text.strip()))
+        try:
+            # Convert first page to image and OCR with Gemini
+            gemini_text, gemini_conf = await self._ocr_image_bytes(pdf_bytes)
+            if gemini_text:
+                return gemini_text, gemini_conf, page_count
+        except Exception as exc:
+            logger.warning("Gemini PDF OCR fallback failed: %s", exc)
+
+        # If we got at least some text from pypdf, return that
+        if text.strip():
+            return text, confidence, page_count
+
+        raise ValueError(
+            "Could not extract text from this PDF: no embedded text found "
+            "and Gemini Vision OCR also failed."
+        )
 
     async def extract_text_from_bytes(
         self,
@@ -214,11 +176,11 @@ class OcrService:
         """
         normalized_type = (content_type or "").lower()
         if normalized_type == "application/pdf" or filename.lower().endswith(".pdf"):
-            text, _confidence, _pages = self._ocr_pdf_bytes(file_bytes)
+            text, _confidence, _pages = await self._ocr_pdf_bytes(file_bytes)
             return text
 
         if normalized_type.startswith("image/"):
-            text, _confidence = self._ocr_image_bytes(file_bytes)
+            text, _confidence = await self._ocr_image_bytes(file_bytes)
             return text
 
         raise ValueError(
@@ -247,9 +209,9 @@ class OcrService:
             )
 
         if normalized_type == "pdf":
-            raw_text, confidence, page_count = self._ocr_pdf_bytes(file_bytes)
+            raw_text, confidence, page_count = await self._ocr_pdf_bytes(file_bytes)
         else:
-            raw_text, confidence = self._ocr_image_bytes(file_bytes)
+            raw_text, confidence = await self._ocr_image_bytes(file_bytes)
 
         logger.info(
             "OCR done: document_id=%s pages=%d chars=%d confidence=%.2f",
