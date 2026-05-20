@@ -50,21 +50,31 @@ const pages: Record<string, PageContent> = {
     title: 'Privacy Policy',
     strapline: 'Your Data Remains Your Data',
     description: 'How NeuroDocs handles, stores, and protects personal data.',
-    updated: 'March 12, 2026',
+    updated: 'March 14, 2024',
     highlights: ['Data minimization', 'Encrypted transport', 'Retention controls'],
     sections: [
       {
-        heading: 'Data We Process',
+        heading: '1. Information We Collect',
         body: [
-          'NeuroDocs processes document files and metadata needed to deliver OCR, classification, and extraction features.',
-          'Only data required for service operation, support, billing, and security monitoring is retained.',
+          'We collect information you provide directly to us when you create an account, such as your name, email address, and authentication credentials via Supabase.',
         ],
       },
       {
-        heading: 'Security and Retention',
+        heading: '2. Document Privacy',
         body: [
-          'Documents are stored in secured infrastructure with access controls and encrypted transport.',
-          'Retention periods can be configured based on account plan and compliance requirements.',
+          'Documents uploaded to NeuroDocs are stored securely in Supabase Storage with Row Level Security (RLS) enabled. This means only you can access the documents you upload. We do not use your private documents to train our core AI models.',
+        ],
+      },
+      {
+        heading: '3. Data Retention',
+        body: [
+          'You can manually delete your documents at any time from your dashboard. When a document is deleted, all associated metadata and extracted AI fields are permanently removed from our databases.',
+        ],
+      },
+      {
+        heading: '4. Contact Us',
+        body: [
+          'If you have any questions about this Privacy Policy, please contact us or open an issue on our GitHub repository.',
         ],
       },
     ],
@@ -75,21 +85,31 @@ const pages: Record<string, PageContent> = {
     title: 'Terms of Service',
     strapline: 'Clear Usage Terms For Every Workspace',
     description: 'The agreement governing use of NeuroDocs services.',
-    updated: 'March 12, 2026',
+    updated: 'March 14, 2024',
     highlights: ['Usage rules', 'Plan limits', 'Liability framework'],
     sections: [
       {
-        heading: 'Service Access',
+        heading: '1. Service Description',
         body: [
-          'By using NeuroDocs, you agree to use the platform in compliance with all applicable laws and internal policies.',
-          'Account owners are responsible for activity under their workspace, including team member access management.',
+          'NeuroDocs provides AI-powered document intelligence tools, including OCR text extraction, zero-shot classification, and structured data extraction. The services are provided "as is" for demonstration and processing purposes.',
         ],
       },
       {
-        heading: 'Limits and Liability',
+        heading: '2. User Responsibilities',
         body: [
-          'Service availability and processing accuracy are provided on a best-effort basis subject to plan-level guarantees.',
-          'Liability limits, disclaimers, and governing law terms apply as outlined in your signed or accepted agreement.',
+          'You are responsible for the documents you upload to NeuroDocs. Do not upload illegal content or documents containing highly sensitive protected health information (PHI) or state secrets, as this is a demonstration SaaS environment.',
+        ],
+      },
+      {
+        heading: '3. API Usage Limits',
+        body: [
+          'Users on the Free tier are subject to rate limiting and monthly document processing caps. Attempting to bypass these limits via automated scraping or multiple accounts is a violation of these terms.',
+        ],
+      },
+      {
+        heading: '4. Changes to Terms',
+        body: [
+          'We reserve the right to modify these terms at any time. We will provide notice of significant changes by updating the date at the top of this page.',
         ],
       },
     ],

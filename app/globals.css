@@ -119,6 +119,11 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+:root.light body {
+  background: radial-gradient(circle at 50% 0%, rgba(250, 249, 246, 0.3), rgba(250, 249, 246, 0.9)), url('/premium_light_bg.png') no-repeat center top fixed;
+  background-size: cover;
+}
+
 /* ── Scrollbar ── */
 ::-webkit-scrollbar {
   width: 5px;
