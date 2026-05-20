@@ -85,7 +85,7 @@ export default function Problem() {
                     className="mt-12 text-center"
                 >
                     <p className="text-sm text-slate-500">
-                        DocuMind solves all three — automatically, at scale, in seconds.
+                        NeuroDocs solves all three — automatically, at scale, in seconds.
                     </p>
                 </motion.div>
             </div>

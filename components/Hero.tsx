@@ -104,14 +104,14 @@ function ProductPreview() {
         <div className="relative w-full max-w-[390px] mx-auto">
             {/* Ambient glow */}
             <div className="absolute -inset-8 rounded-3xl pointer-events-none" aria-hidden="true"
-                style={{ background: 'radial-gradient(ellipse at 50% 40%, rgba(99,102,241,0.18) 0%, rgba(167,139,250,0.10) 45%, transparent 70%)' }} />
+                style={{ background: 'radial-gradient(ellipse at 50% 40%, rgba(99,102,241,0.15) 0%, rgba(167,139,250,0.08) 45%, transparent 70%)' }} />
 
-            {/* FIX: parent "frame" wrapping all three sub-panels */}
+            {/* Parent "frame" wrapping all three sub-panels */}
             <div className="relative flex flex-col gap-3 p-4 rounded-3xl"
                 style={{
-                    background: 'rgba(255,255,255,0.025)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    boxShadow: '0 40px 100px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.06)',
+                    background: 'var(--dashboard-bg)',
+                    border: '1px solid var(--dashboard-border)',
+                    boxShadow: '0 40px 100px var(--dashboard-shadow), 0 0 0 1px var(--border), inset 0 1px 0 var(--border)',
                 }}>
 
                 {/* Title bar dots */}
@@ -120,16 +120,16 @@ function ProductPreview() {
                     <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'rgba(234,179,8,0.7)' }} />
                     <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'rgba(34,197,94,0.7)' }} />
                     <div className="flex-1 mx-4 h-5 rounded-md flex items-center justify-center text-[10px] font-mono"
-                        style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.2)' }}>
-                        app.documind.ai
+                        style={{ background: 'var(--border)', color: 'var(--text-muted)' }}>
+                        app.neurodocs.ai
                     </div>
                 </div>
 
                 {/* File card */}
                 <div className="relative rounded-xl p-3.5 overflow-hidden"
                     style={{
-                        background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(99,102,241,0.2)',
-                        boxShadow: '0 0 0 1px rgba(99,102,241,0.12), 0 8px 24px rgba(0,0,0,0.3)'
+                        background: 'var(--bg-card)', border: '1px solid var(--border-glow)',
+                        boxShadow: '0 0 0 1px var(--border), 0 8px 24px var(--dashboard-shadow)'
                     }}>
                     {/* Scan line */}
                     <div className="absolute inset-0 overflow-hidden rounded-xl pointer-events-none" aria-hidden="true">
@@ -145,15 +145,15 @@ function ProductPreview() {
                             <FileText className="w-4 h-4 text-white" />
                         </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-white text-[13px] font-semibold truncate">Q4_Invoice_2024.pdf</p>
-                            <p className="text-[11px] mt-0.5" style={{ color: 'rgba(255,255,255,0.38)' }}>2.4 MB · PDF Document</p>
+                            <p className="text-[13px] font-semibold truncate" style={{ color: 'var(--text-primary)' }}>Q4_Invoice_2024.pdf</p>
+                            <p className="text-[11px] mt-0.5" style={{ color: 'var(--text-muted)' }}>2.4 MB · PDF Document</p>
                         </div>
                         <div className="flex items-center gap-1.5 shrink-0">
-                            <span className="w-1.5 h-1.5 rounded-full glow-breathe" style={{ background: '#34D399' }} />
-                            <span className="text-[10px] font-medium" style={{ color: '#34D399' }}>Live</span>
+                            <span className="w-1.5 h-1.5 rounded-full glow-breathe" style={{ background: 'var(--emerald)' }} />
+                            <span className="text-[10px] font-medium" style={{ color: 'var(--emerald)' }}>Live</span>
                         </div>
                     </div>
-                    <div className="mt-3 h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.07)' }}>
+                    <div className="mt-3 h-1 rounded-full overflow-hidden" style={{ background: 'var(--border)' }}>
                         <div className="h-full rounded-full transition-all duration-100"
                             style={{
                                 width: `${progress}%`, background: 'linear-gradient(90deg,#6366F1,#22D3EE)',
@@ -161,8 +161,8 @@ function ProductPreview() {
                             }} />
                     </div>
                     <div className="mt-1.5 flex justify-between">
-                        <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.28)' }}>{STEPS[step].sub}</span>
-                        <span className="text-[10px] font-bold" style={{ color: '#818CF8' }}>{Math.round(progress)}%</span>
+                        <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>{STEPS[step].sub}</span>
+                        <span className="text-[10px] font-bold" style={{ color: 'var(--indigo)' }}>{Math.round(progress)}%</span>
                     </div>
                 </div>
 
@@ -176,8 +176,8 @@ function ProductPreview() {
                             <div key={s.label}
                                 className="relative flex items-center gap-2 px-2.5 py-2.5 rounded-xl transition-all duration-300"
                                 style={{
-                                    background: cur ? `${s.color}12` : done ? 'rgba(52,211,153,0.06)' : 'rgba(255,255,255,0.02)',
-                                    border: cur ? `1px solid ${s.color}45` : done ? '1px solid rgba(52,211,153,0.18)' : '1px solid rgba(255,255,255,0.06)',
+                                    background: cur ? `${s.color}12` : done ? 'rgba(52,211,153,0.06)' : 'var(--bg-card)',
+                                    border: cur ? `1px solid ${s.color}45` : done ? '1px solid rgba(52,211,153,0.18)' : '1px solid var(--border)',
                                 }}>
                                 {cur && (
                                     <motion.div className="absolute inset-0 rounded-xl pointer-events-none"
@@ -188,10 +188,11 @@ function ProductPreview() {
                                 <div className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0"
                                     style={{ background: `${s.color}18` }}>
                                     {done
-                                        ? <CheckCircle style={{ width: '0.875rem', height: '0.875rem', color: '#34D399' }} />
-                                        : <Icon className="w-3.5 h-3.5" style={{ color: cur ? s.color : 'rgba(255,255,255,0.22)' }} />}
+                                        ? <CheckCircle style={{ width: '0.875rem', height: '0.875rem', color: 'var(--emerald)' }} />
+                                        : <Icon className="w-3.5 h-3.5" style={{ color: cur ? s.color : 'var(--text-muted)' }} />}
                                 </div>
-                                <p className={`text-[11px] font-semibold leading-tight truncate ${cur || done ? 'text-white' : 'text-white/25'}`}>
+                                <p className="text-[11px] font-semibold leading-tight truncate"
+                                    style={{ color: cur || done ? 'var(--text-primary)' : 'var(--text-muted)' }}>
                                     {s.label}
                                 </p>
                                 {cur && (
@@ -210,14 +211,14 @@ function ProductPreview() {
                     <div className="flex items-center gap-2 mb-3">
                         <div className="w-4 h-4 rounded flex items-center justify-center"
                             style={{ background: 'rgba(167,139,250,0.15)' }}>
-                            <Sparkles className="w-2.5 h-2.5" style={{ color: '#A78BFA' }} />
+                            <Sparkles className="w-2.5 h-2.5" style={{ color: 'var(--violet)' }} />
                         </div>
-                        <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'rgba(167,139,250,0.6)' }}>
+                        <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--violet)' }}>
                             AI Extracted Fields
                         </span>
                         <div className="ml-auto flex items-center gap-1">
-                            <Activity className="w-2.5 h-2.5" style={{ color: '#34D399' }} />
-                            <span className="text-[10px]" style={{ color: '#34D399' }}>Live</span>
+                            <Activity className="w-2.5 h-2.5" style={{ color: 'var(--emerald)' }} />
+                            <span className="text-[10px]" style={{ color: 'var(--emerald)' }}>Live</span>
                         </div>
                     </div>
                     <div className="space-y-1.5">
@@ -226,9 +227,9 @@ function ProductPreview() {
                                 initial={{ opacity: 0, x: 8 }}
                                 animate={{ opacity: show ? 1 : 0.15, x: show ? 0 : 8 }}
                                 transition={{ delay: idx * 0.07, duration: 0.25 }}
-                                className="flex items-center justify-between py-1" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                                <span className="text-[11px]" style={{ color: 'rgba(255,255,255,0.32)' }}>{f.k}</span>
-                                <span className={`text-[11px] font-semibold ${f.hi ? 'text-indigo-300' : 'text-white/75'}`}>{f.v}</span>
+                                className="flex items-center justify-between py-1" style={{ borderBottom: '1px solid var(--border)' }}>
+                                <span className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{f.k}</span>
+                                <span className="text-[11px] font-semibold" style={{ color: f.hi ? 'var(--indigo)' : 'var(--text-primary)' }}>{f.v}</span>
                             </motion.div>
                         ))}
                     </div>
@@ -243,18 +244,18 @@ export default function Hero() {
     return (
         <section
             id="hero"
-            className="relative flex flex-col justify-center overflow-hidden grid-bg border-t border-white/10 py-40"
+            className="relative flex flex-col justify-center overflow-hidden grid-bg border-t border-[var(--border)] py-40"
             style={{ minHeight: '760px' }}
         >
 
             {/* Blobs */}
             <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
                 <div className="absolute -top-32 -left-16 w-[700px] h-[700px] rounded-full"
-                    style={{ background: 'radial-gradient(circle,rgba(99,102,241,0.10) 0%,transparent 65%)' }} />
+                    style={{ background: 'radial-gradient(circle,rgba(99,102,241,0.08) 0%,transparent 65%)' }} />
                 <div className="absolute top-1/2 -right-24 w-[500px] h-[500px] rounded-full"
-                    style={{ background: 'radial-gradient(circle,rgba(167,139,250,0.08) 0%,transparent 70%)' }} />
+                    style={{ background: 'radial-gradient(circle,rgba(167,139,250,0.06) 0%,transparent 70%)' }} />
                 <div className="absolute -bottom-32 left-0 w-[400px] h-[400px] rounded-full"
-                    style={{ background: 'radial-gradient(circle,rgba(34,211,238,0.06) 0%,transparent 70%)' }} />
+                    style={{ background: 'radial-gradient(circle,rgba(34,211,238,0.04) 0%,transparent 70%)' }} />
             </div>
             <Particles />
 
@@ -268,22 +269,22 @@ export default function Hero() {
                         {/* Badge */}
                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
                             <div className="w-fit flex items-center gap-2.5 px-4 py-2 rounded-full"
-                                style={{ background: 'rgba(99,102,241,0.09)', border: '1px solid rgba(99,102,241,0.22)', backdropFilter: 'blur(16px)' }}>
+                                style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glow)', backdropFilter: 'blur(16px)' }}>
                                 <span className="relative flex h-2 w-2">
                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
-                                        style={{ background: '#818CF8' }}></span>
-                                    <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: '#818CF8' }}></span>
+                                        style={{ background: 'var(--indigo)' }}></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: 'var(--indigo)' }}></span>
                                 </span>
                                 <span className="text-xs font-semibold tracking-wider uppercase"
-                                    style={{ color: 'rgba(199,210,254,0.72)' }}>AI-Powered · Public Beta</span>
+                                    style={{ color: 'var(--text-secondary)' }}>AI-Powered · Public Beta</span>
                             </div>
                         </motion.div>
 
-                        {/* Headline — FIX: explicit padding-left ensures it's never flush to viewport edge */}
+                        {/* Headline */}
                         <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.65, delay: 0.1 }}
-                            className="font-black text-white"
-                            style={{ fontSize: 'clamp(2.5rem,5vw,4.5rem)', lineHeight: 1.05, letterSpacing: '-0.03em' }}>
+                            className="font-black"
+                            style={{ color: 'var(--text-primary)', fontSize: 'clamp(2.5rem,5vw,4.5rem)', lineHeight: 1.05, letterSpacing: '-0.03em' }}>
                             Intelligent<br />
                             <span style={{
                                 background: 'linear-gradient(90deg,#818CF8 0%,#C7D2FE 35%,#818CF8 55%,#A78BFA 100%)',
@@ -293,14 +294,14 @@ export default function Hero() {
                                 backgroundClip: 'text',
                                 animation: 'shimmer-move 3s linear infinite',
                             }}>Document AI</span><br />
-                            <span style={{ color: '#F1F5F9' }}>for modern teams</span>
+                            <span style={{ color: 'var(--text-primary)' }}>for modern teams</span>
                         </motion.h1>
 
                         {/* Sub */}
                         <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: 0.2 }}
                             className="text-base lg:text-lg leading-[1.8] max-w-[460px]"
-                            style={{ color: 'rgba(241,245,249,0.52)' }}>
+                            style={{ color: 'var(--text-secondary)' }}>
                             Automate document workflows with cutting-edge AI — merge, split, compress,
                             extract, and classify at enterprise scale. From upload to insight in seconds.
                         </motion.p>
@@ -309,9 +310,9 @@ export default function Hero() {
                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: 0.28 }} className="flex flex-wrap gap-2">
                             {TRUST.map(({ icon: Icon, label }) => (
-                                <div key={label} className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full glass text-xs font-medium"
-                                    style={{ color: 'rgba(241,245,249,0.5)', border: '1px solid rgba(255,255,255,0.09)' }}>
-                                    <Icon className="w-3.5 h-3.5" style={{ color: '#818CF8' }} />
+                                <div key={label} className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium border border-[var(--border)] bg-[var(--bg-card)]"
+                                    style={{ color: 'var(--text-secondary)' }}>
+                                    <Icon className="w-3.5 h-3.5" style={{ color: 'var(--indigo)' }} />
                                     {label}
                                 </div>
                             ))}
@@ -342,10 +343,9 @@ export default function Hero() {
                                 whileHover={{ y: -3, scale: 1.03 }}
                                 whileTap={{ scale: 0.97 }}
                                 transition={{ type: 'spring', stiffness: 360, damping: 22 }}
-                                className="group inline-flex items-center gap-2 rounded-2xl text-sm font-semibold"
+                                className="group inline-flex items-center gap-2 rounded-2xl text-sm font-semibold border border-[var(--border)] bg-[var(--bg-card)]"
                                 style={{
-                                    padding: '0.875rem 1.625rem', background: 'rgba(255,255,255,0.05)',
-                                    border: '1px solid rgba(255,255,255,0.11)', color: 'rgba(241,245,249,0.65)'
+                                    padding: '0.875rem 1.625rem', color: 'var(--text-secondary)'
                                 }}>
                                 See how it works
                                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -354,7 +354,7 @@ export default function Hero() {
 
                         {/* Stats */}
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.52 }}
-                            className="flex gap-8 pt-6 mt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+                            className="flex gap-8 pt-6 mt-2 border-t border-[var(--border)]">
                             {STATS.map(s => (
                                 <div key={s.label} className="flex flex-col gap-1">
                                     <span className="text-2xl font-black" style={{
@@ -362,7 +362,7 @@ export default function Hero() {
                                         WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'
                                     }}>{s.value}</span>
                                     <span className="text-[11px] font-medium uppercase tracking-wide"
-                                        style={{ color: 'rgba(241,245,249,0.3)' }}>{s.label}</span>
+                                        style={{ color: 'var(--text-muted)' }}>{s.label}</span>
                                 </div>
                             ))}
                         </motion.div>
@@ -375,7 +375,7 @@ export default function Hero() {
                         transition={{ duration: 0.8, delay: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
                         className="hidden lg:block float-anim"
                         style={{ animationDuration: '8s' }}
-                        aria-label="DocuMind product preview">
+                        aria-label="NeuroDocs product preview">
                         <ProductPreview />
                     </motion.div>
 
@@ -383,7 +383,7 @@ export default function Hero() {
             </div>
 
             <div className="absolute bottom-0 inset-x-0 h-40 pointer-events-none"
-                style={{ background: 'linear-gradient(to top,#0A0A0A 0%,transparent 100%)' }} />
+                style={{ background: 'linear-gradient(to top,var(--bg) 0%,transparent 100%)' }} />
         </section>
     );
 }

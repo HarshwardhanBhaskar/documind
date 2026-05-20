@@ -54,6 +54,13 @@ class JobStatus(str, Enum):
     FAILED = "failed"
 
 
+class ReviewStatus(str, Enum):
+    NEW = "new"
+    NEEDS_REVIEW = "needs_review"
+    APPROVED = "approved"
+    REJECTED = "rejected"
+
+
 class FileType(str, Enum):
     PDF  = "pdf"
     PNG  = "png"
@@ -115,6 +122,11 @@ class DocumentRow(DocumentBase):
     extracted_fields:  dict[str, Any] | None = None
     file_size_bytes:   int | None = None
     page_count:        int | None = None
+    review_status:     ReviewStatus = ReviewStatus.NEW
+    review_notes:      str | None = None
+    reviewed_at:       datetime | None = None
+    invoice_issue_flags: list[str] = Field(default_factory=list)
+    duplicate_detected: bool = False
 
     class Config:
         from_attributes = True
@@ -128,11 +140,21 @@ class DocumentSummary(BaseModel):
     upload_time:       datetime
     processing_status: ProcessingStatus
     storage_url:       str | None = None
+    classified_type:   str | None = None
+    review_status:     ReviewStatus = ReviewStatus.NEW
+    invoice_issue_flags: list[str] = Field(default_factory=list)
+    duplicate_detected: bool = False
 
 
 class DocumentDetail(DocumentRow):
     """Full document including AI results."""
     pass
+
+
+class InvoiceReviewUpdateRequest(BaseModel):
+    review_status: ReviewStatus
+    review_notes: str | None = None
+    extracted_fields: dict[str, Any] | None = None
 
 
 # ─── Processing models ────────────────────────────────────────────────────────

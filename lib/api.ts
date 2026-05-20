@@ -27,6 +27,7 @@ export interface UserResponse {
 }
 
 export type ProcessingStatus = 'pending' | 'processing' | 'completed' | 'failed';
+export type ReviewStatus = 'new' | 'needs_review' | 'approved' | 'rejected';
 
 export interface DocumentSummary {
     id: string;
@@ -35,6 +36,10 @@ export interface DocumentSummary {
     upload_time: string;
     processing_status: ProcessingStatus;
     storage_url: string | null;
+    classified_type: string | null;
+    review_status: ReviewStatus;
+    invoice_issue_flags: string[];
+    duplicate_detected: boolean;
 }
 
 export interface DocumentDetail extends DocumentSummary {
@@ -44,6 +49,14 @@ export interface DocumentDetail extends DocumentSummary {
     extracted_fields: Record<string, string> | null;
     file_size_bytes: number | null;
     page_count: number | null;
+    review_notes: string | null;
+    reviewed_at: string | null;
+}
+
+export interface InvoiceReviewUpdateRequest {
+    review_status: ReviewStatus;
+    review_notes?: string | null;
+    extracted_fields?: Record<string, string> | null;
 }
 
 export interface OcrResult {
@@ -307,6 +320,20 @@ export const documentsApi = {
 
     get: (id: string, token: string) =>
         apiFetch<DocumentDetail>(`/documents/${id}`, {}, token),
+
+    reviewInvoice: (id: string, payload: InvoiceReviewUpdateRequest, token: string) =>
+        apiFetch<DocumentDetail>(`/documents/${id}/review`, {
+            method: 'PATCH',
+            body: JSON.stringify(payload),
+        }, token),
+
+    exportInvoices: (token: string, format: 'csv' | 'json' = 'csv', reviewStatus = 'approved') => {
+        const headers: Record<string, string> = { Authorization: `Bearer ${token}` };
+        return fetchBlobWithTimeout(`/documents/invoices/export?format=${format}&review_status=${reviewStatus}`, {
+            method: 'GET',
+            headers,
+        });
+    },
 
     delete: (id: string, token: string) =>
         apiFetch<{ message: string }>(`/documents/${id}`, { method: 'DELETE' }, token),

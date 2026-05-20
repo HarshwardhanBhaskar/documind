@@ -29,7 +29,7 @@ const FEATURES: FeatureItem[] = [
 ];
 
 function isToolType(id: FeatureId): id is ToolType {
-    return id === 'merge' || id === 'compress' || id === 'convert';
+    return id === 'merge' || id === 'compress' || id === 'convert' || id === 'ocr' || id === 'ai' || id === 'extract';
 }
 
 const stagger = {
@@ -53,16 +53,16 @@ export default function Features() {
     };
 
     return (
-        <section id="features" className="relative py-32 border-t border-white/10">
+        <section id="features" className="relative py-32 border-t border-[var(--border)]">
             <div id="tools" className="absolute -top-24" aria-hidden="true" />
             <div className="section-divider absolute top-0 inset-x-0" />
 
             {/* Ambient blobs */}
             <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
                 <div className="absolute top-1/2 -translate-y-1/2 -left-40 w-[520px] h-[520px] rounded-full"
-                    style={{ background: 'radial-gradient(circle,rgba(99,102,241,0.08) 0%,transparent 70%)' }} />
+                    style={{ background: 'radial-gradient(circle,rgba(99,102,241,0.06) 0%,transparent 70%)' }} />
                 <div className="absolute top-1/2 -translate-y-1/2 -right-40 w-[520px] h-[520px] rounded-full"
-                    style={{ background: 'radial-gradient(circle,rgba(167,139,250,0.07) 0%,transparent 70%)' }} />
+                    style={{ background: 'radial-gradient(circle,rgba(167,139,250,0.05) 0%,transparent 70%)' }} />
             </div>
 
             <div className="max-w-7xl mx-auto px-6 relative z-10">
@@ -76,16 +76,16 @@ export default function Features() {
                     className="flex flex-col items-center text-center mb-16">
 
                     <div className="flex items-center gap-2 px-4 py-1.5 rounded-full mb-5"
-                        style={{ background: 'rgba(167,139,250,0.08)', border: '1px solid rgba(167,139,250,0.18)', backdropFilter: 'blur(16px)' }}>
-                        <BrainCircuit className="w-3.5 h-3.5" style={{ color: '#A78BFA' }} />
-                        <span className="text-badge" style={{ color: 'rgba(167,139,250,0.72)' }}>Tools &amp; Features</span>
+                        style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glow)', backdropFilter: 'blur(16px)' }}>
+                        <BrainCircuit className="w-3.5 h-3.5" style={{ color: 'var(--violet)' }} />
+                        <span className="text-badge" style={{ color: 'var(--violet)' }}>Tools &amp; Features</span>
                     </div>
 
-                    <h2 className="text-3xl font-semibold text-center text-white mb-4 max-w-2xl mx-auto">
+                    <h2 className="text-3xl font-semibold text-center mb-4 max-w-2xl mx-auto" style={{ color: 'var(--text-primary)' }}>
                         Everything you need to{' '}
                         <span className="gradient-text">master documents</span>
                     </h2>
-                    <p className="text-gray-400 leading-relaxed max-w-2xl mx-auto text-center">
+                    <p className="leading-relaxed max-w-2xl mx-auto text-center" style={{ color: 'var(--text-secondary)' }}>
                         A complete AI-powered toolkit — from basic PDF transformations to intelligent
                         data extraction and classification.
                     </p>
@@ -107,7 +107,7 @@ export default function Features() {
                                 variants={item}
                                 whileHover={{ y: -8, scale: 1.012 }}
                                 transition={{ type: 'spring', stiffness: 320, damping: 22 }}
-                                className="group relative rounded-xl overflow-hidden cursor-pointer p-6 border border-white/10 bg-white/5 backdrop-blur hover:border-indigo-500/50 hover:scale-[1.02] transition duration-300"
+                                className="group relative rounded-xl overflow-hidden cursor-pointer p-6 border border-[var(--border)] bg-[var(--bg-card)] backdrop-blur hover:border-indigo-500/50 hover:scale-[1.02] transition duration-300"
                                 onClick={() => openTool(f)}>
 
                                 {/* Hover glow fill */}
@@ -140,22 +140,22 @@ export default function Features() {
                                             <span
                                                 className="text-badge px-2.5 py-1 rounded-full"
                                                 style={{
-                                                    background: 'rgba(99,102,241,0.12)',
-                                                    color: '#818CF8',
-                                                    border: '1px solid rgba(99,102,241,0.22)',
+                                                    background: 'var(--border)',
+                                                    color: 'var(--indigo)',
+                                                    border: '1px solid var(--border-glow)',
                                                 }}>
                                                 {f.tag}
                                             </span>
                                         )}
                                     </div>
 
-                                    <h3 className="text-xl font-medium text-white mb-2">{f.title}</h3>
-                                    <p className="text-gray-400 leading-relaxed text-sm">{f.description}</p>
+                                    <h3 className="text-xl font-medium mb-2" style={{ color: 'var(--text-primary)' }}>{f.title}</h3>
+                                    <p className="leading-relaxed text-sm" style={{ color: 'var(--text-secondary)' }}>{f.description}</p>
 
                                     {/* Explore link */}
                                     <div
                                         className="mt-5 flex items-center gap-1 text-xs font-semibold group-hover:text-indigo-400 transition-colors duration-250"
-                                        style={{ color: 'rgba(241,245,249,0.35)' }}>
+                                        style={{ color: 'var(--text-muted)' }}>
                                         <span>Explore</span>
                                         <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1.5 transition-transform duration-250" />
                                     </div>

@@ -96,7 +96,7 @@ export default function AuthModal({ open, onClose, onSuccess }: AuthModalProps) 
                                         {mode === 'login' ? 'Welcome back' : 'Create account'}
                                     </h2>
                                     <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>
-                                        {mode === 'login' ? 'Sign in to DocuMind' : 'Start for free – no card required'}
+                                        {mode === 'login' ? 'Sign in to NeuroDocs' : 'Start for free – no card required'}
                                     </p>
                                 </div>
                                 <button

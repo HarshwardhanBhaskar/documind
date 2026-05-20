@@ -94,14 +94,14 @@ export default function NotFound() {
                     </button>
                 </motion.div>
 
-                {/* DocuMind branding */}
+                {/* NeuroDocs branding */}
                 <motion.p
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.5, delay: 0.6 }}
                     className="mt-12 text-xs text-slate-600"
                 >
-                    © DocuMind — Intelligent Document AI
+                    © NeuroDocs — Intelligent Document AI
                 </motion.p>
             </div>
         </section>

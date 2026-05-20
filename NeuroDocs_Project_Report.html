@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeuroDocs — Project Report</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0f0f1a;
+    color: #e0e0e0;
+    line-height: 1.7;
+    padding: 40px;
+  }
+
+  .container { max-width: 900px; margin: 0 auto; }
+
+  /* Cover Page */
+  .cover {
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-bottom: 2px solid #2a2a4a;
+    padding-bottom: 60px;
+    margin-bottom: 60px;
+    page-break-after: always;
+  }
+
+  .cover-logo {
+    font-size: 64px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+  }
+
+  .cover-subtitle {
+    font-size: 22px;
+    color: #a0a0c0;
+    margin-bottom: 40px;
+    font-weight: 300;
+  }
+
+  .cover-meta {
+    font-size: 16px;
+    color: #8080a0;
+    line-height: 2;
+  }
+
+  .cover-meta strong { color: #c0c0e0; }
+
+  .cover-badge {
+    display: inline-block;
+    padding: 8px 24px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.2));
+    border: 1px solid rgba(99,102,241,0.3);
+    color: #a78bfa;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 30px;
+  }
+
+  /* Headings */
+  h1 {
+    font-size: 32px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 50px 0 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #2a2a4a;
+  }
+
+  h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #c4b5fd;
+    margin: 35px 0 15px;
+  }
+
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #93c5fd;
+    margin: 25px 0 10px;
+  }
+
+  p { margin: 10px 0; color: #c0c0d0; }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0 25px;
+    font-size: 14px;
+  }
+
+  th {
+    background: rgba(99,102,241,0.15);
+    color: #a78bfa;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #3a3a5a;
+  }
+
+  td {
+    padding: 10px 16px;
+    border-bottom: 1px solid #2a2a4a;
+    color: #c0c0d0;
+  }
+
+  tr:hover td { background: rgba(99,102,241,0.05); }
+
+  /* Code blocks */
+  code {
+    background: rgba(99,102,241,0.15);
+    color: #a78bfa;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  }
+
+  pre {
+    background: #1a1a2e;
+    border: 1px solid #2a2a4a;
+    border-radius: 8px;
+    padding: 20px;
+    overflow-x: auto;
+    margin: 15px 0;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  pre code {
+    background: none;
+    padding: 0;
+    color: #c0c0d0;
+  }
+
+  /* Lists */
+  ul, ol { margin: 10px 0 10px 24px; color: #c0c0d0; }
+  li { margin: 5px 0; }
+
+  /* Cards */
+  .card {
+    background: rgba(30,30,60,0.6);
+    border: 1px solid #2a2a4a;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 15px 0;
+  }
+
+  .highlight-box {
+    background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(168,85,247,0.1));
+    border-left: 4px solid #6366f1;
+    padding: 16px 20px;
+    border-radius: 0 8px 8px 0;
+    margin: 15px 0;
+  }
+
+  /* Pipeline flow */
+  .pipeline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+  }
+
+  .pipeline-step {
+    background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.2));
+    border: 1px solid rgba(99,102,241,0.3);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    color: #c4b5fd;
+    font-size: 14px;
+  }
+
+  .pipeline-arrow { color: #6366f1; font-size: 20px; font-weight: bold; }
+
+  /* Section numbers */
+  .section-num {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    color: white;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: 700;
+    margin-right: 10px;
+  }
+
+  /* Architecture diagram */
+  .arch-diagram {
+    background: #1a1a2e;
+    border: 1px solid #2a2a4a;
+    border-radius: 12px;
+    padding: 30px;
+    margin: 20px 0;
+    text-align: center;
+    font-family: monospace;
+    font-size: 13px;
+    line-height: 1.4;
+    white-space: pre;
+    overflow-x: auto;
+    color: #a0a0c0;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: 60px;
+    padding-top: 30px;
+    border-top: 2px solid #2a2a4a;
+    color: #6060a0;
+    font-size: 14px;
+  }
+
+  /* Print styles */
+  @media print {
+    body { background: white; color: #111; padding: 20px; }
+    .cover { min-height: auto; padding-bottom: 40px; }
+    .cover-logo { -webkit-text-fill-color: #6366f1; }
+    h1 { -webkit-text-fill-color: #4338ca; border-color: #ddd; }
+    h2 { color: #5b21b6; }
+    h3 { color: #1d4ed8; }
+    p, li, td { color: #333; }
+    th { background: #f0f0ff; color: #4338ca; border-color: #ddd; }
+    td { border-color: #eee; }
+    tr:hover td { background: none; }
+    code { background: #f0f0ff; color: #4338ca; }
+    pre { background: #f8f8fc; border-color: #ddd; }
+    pre code { color: #333; }
+    .card { background: #f8f8fc; border-color: #ddd; }
+    .highlight-box { background: #f0f0ff; border-color: #4338ca; }
+    .pipeline-step { background: #f0f0ff; border-color: #c4b5fd; color: #4338ca; }
+    .pipeline-arrow { color: #4338ca; }
+    .arch-diagram { background: #f8f8fc; border-color: #ddd; color: #333; }
+    .cover-badge { background: #f0f0ff; border-color: #c4b5fd; color: #5b21b6; }
+    .cover-subtitle, .cover-meta { color: #555; }
+    .cover-meta strong { color: #111; }
+    .footer { color: #888; border-color: #ddd; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ═══════════════════ COVER PAGE ═══════════════════ -->
+<div class="cover">
+  <div class="cover-logo">NeuroDocs</div>
+  <div class="cover-subtitle">Intelligent Document AI for Modern Teams</div>
+  <div class="cover-meta">
+    <strong>Project Type:</strong> SaaS Web Application<br>
+    <strong>Developer:</strong> Harshwardhan Bhaskar<br>
+    <strong>Date:</strong> March 2026<br>
+    <strong>Stack:</strong> Next.js · FastAPI · Supabase · Google Gemini AI<br>
+    <strong>Live URL:</strong> neurodocs-api.onrender.com
+  </div>
+  <div class="cover-badge">Full-Stack AI-Powered Document Processing Platform</div>
+</div>
+
+<!-- ═══════════════════ TABLE OF CONTENTS ═══════════════════ -->
+<h1><span class="section-num">0</span> Table of Contents</h1>
+<ol style="font-size:15px; line-height:2.2;">
+  <li>Project Overview</li>
+  <li>Technology Stack</li>
+  <li>System Architecture</li>
+  <li>Feature Breakdown
+    <ul>
+      <li>4.1 Authentication System</li>
+      <li>4.2 Document Upload & Management</li>
+      <li>4.3 AI Processing Pipeline (Gemini)</li>
+      <li>4.4 PDF Utility Tools</li>
+      <li>4.5 SaaS Monetization</li>
+    </ul>
+  </li>
+  <li>Frontend Pages & Components</li>
+  <li>Database Schema</li>
+  <li>Security Implementation</li>
+  <li>Deployment Architecture</li>
+  <li>API Endpoints Summary</li>
+  <li>What Makes This Project Special</li>
+</ol>
+
+<!-- ═══════════════════ SECTION 1 ═══════════════════ -->
+<h1><span class="section-num">1</span> Project Overview</h1>
+<p><strong>NeuroDocs</strong> is a full-stack <strong>SaaS (Software as a Service)</strong> web application that provides intelligent document processing using Artificial Intelligence. Users can upload PDF and image documents, and the platform automatically performs:</p>
+<ul>
+  <li><strong>OCR</strong> (Optical Character Recognition) — extracting text from documents</li>
+  <li><strong>AI Classification</strong> — identifying the document type (Invoice, Receipt, Contract, Resume, Certificate, etc.)</li>
+  <li><strong>Smart Field Extraction</strong> — pulling out structured data (vendor name, amounts, dates, etc.)</li>
+  <li><strong>Document Summarization</strong> — generating concise summaries using AI</li>
+  <li><strong>PDF Utilities</strong> — merging, compressing, and converting PDF documents</li>
+</ul>
+<div class="highlight-box">
+  The application follows a <strong>freemium SaaS model</strong> with tiered pricing plans that control upload limits and AI processing credits per month.
+</div>
+
+<!-- ═══════════════════ SECTION 2 ═══════════════════ -->
+<h1><span class="section-num">2</span> Technology Stack</h1>
+
+<h2>Frontend Technologies</h2>
+<table>
+  <tr><th>Technology</th><th>Purpose</th></tr>
+  <tr><td><strong>Next.js 14</strong></td><td>React-based full-stack framework with App Router</td></tr>
+  <tr><td><strong>TypeScript</strong></td><td>Type-safe JavaScript for reliability and developer experience</td></tr>
+  <tr><td><strong>Custom CSS</strong></td><td>Glassmorphism, gradients, animations, responsive design</td></tr>
+  <tr><td><strong>Three.js / R3F</strong></td><td>3D animated document scene on the landing page</td></tr>
+  <tr><td><strong>Supabase JS</strong></td><td>Client-side authentication (sign up, login, JWT management)</td></tr>
+</table>
+
+<h2>Backend Technologies</h2>
+<table>
+  <tr><th>Technology</th><th>Purpose</th></tr>
+  <tr><td><strong>FastAPI (Python)</strong></td><td>High-performance async REST API framework</td></tr>
+  <tr><td><strong>Uvicorn</strong></td><td>ASGI server for running FastAPI in production</td></tr>
+  <tr><td><strong>Google Gemini 2.0 Flash</strong></td><td>AI-powered classification, extraction, and summarization</td></tr>
+  <tr><td><strong>PyPDF</strong></td><td>PDF text extraction and manipulation</td></tr>
+  <tr><td><strong>Pillow (PIL)</strong></td><td>Image processing for PDF-to-image conversion</td></tr>
+  <tr><td><strong>Pydantic</strong></td><td>Data validation and serialization</td></tr>
+  <tr><td><strong>python-jose</strong></td><td>JWT token verification for authentication</td></tr>
+</table>
+
+<h2>Database, Storage & Hosting</h2>
+<table>
+  <tr><th>Service</th><th>Purpose</th></tr>
+  <tr><td><strong>Supabase (PostgreSQL)</strong></td><td>Managed database with Row Level Security (RLS)</td></tr>
+  <tr><td><strong>Supabase Storage</strong></td><td>Cloud file storage for uploaded documents</td></tr>
+  <tr><td><strong>Supabase Auth</strong></td><td>User authentication and JWT token management</td></tr>
+  <tr><td><strong>Cloudflare Pages</strong></td><td>Frontend hosting with global CDN</td></tr>
+  <tr><td><strong>Render</strong></td><td>Backend API hosting (Python)</td></tr>
+  <tr><td><strong>GitHub</strong></td><td>Version control with CI/CD auto-deploy</td></tr>
+</table>
+
+<!-- ═══════════════════ SECTION 3 ═══════════════════ -->
+<h1><span class="section-num">3</span> System Architecture</h1>
+
+<div class="arch-diagram">
+┌──────────────────────────────────────────────────────────────┐
+│                    USER (Browser)                             │
+│           ┌──────────────────────────┐                       │
+│           │   Next.js Frontend       │                       │
+│           │   (Cloudflare Pages)     │                       │
+│           └────────────┬─────────────┘                       │
+└────────────────────────┼─────────────────────────────────────┘
+                         │ HTTPS API Calls
+                         ▼
+┌──────────────────────────────────────────────────────────────┐
+│                  FastAPI Backend (Render)                     │
+│  ┌──────────┐ ┌──────────┐ ┌────────────┐ ┌──────────────┐  │
+│  │ Auth     │ │ Upload   │ │ Processing │ │ Smart        │  │
+│  │ Router   │ │ Router   │ │ Router     │ │ Classify     │  │
+│  └────┬─────┘ └────┬─────┘ └─────┬──────┘ └──────┬───────┘  │
+│       │             │             │                │          │
+│  ┌────┴─────────────┴─────────────┴────────────────┴───────┐ │
+│  │              Service Layer                               │ │
+│  │  ┌─────────┐ ┌──────────────┐ ┌────────────┐           │ │
+│  │  │ OCR     │ │Classification│ │ Extraction │           │ │
+│  │  │ Service │ │ Service      │ │ Service    │           │ │
+│  │  └────┬────┘ └──────┬───────┘ └─────┬──────┘           │ │
+│  │       │              │               │                   │ │
+│  │       └──────────────┼───────────────┘                   │ │
+│  │                      ▼                                   │ │
+│  │           ┌─────────────────────┐                        │ │
+│  │           │  Gemini AI Service  │ ← Google Gemini API    │ │
+│  │           │  (gemini-2.0-flash) │                        │ │
+│  │           └─────────────────────┘                        │ │
+│  └──────────────────────────────────────────────────────────┘ │
+└──────────────────────────┬───────────────────────────────────┘
+                           │
+                           ▼
+┌──────────────────────────────────────────────────────────────┐
+│                   Supabase Cloud                              │
+│  ┌──────────────┐  ┌───────────────┐  ┌───────────────────┐  │
+│  │ PostgreSQL   │  │ Storage       │  │ Auth Service      │  │
+│  │ Database     │  │ (documents    │  │ (JWT, sessions)   │  │
+│  │ (with RLS)   │  │  bucket)      │  │                   │  │
+│  └──────────────┘  └───────────────┘  └───────────────────┘  │
+└──────────────────────────────────────────────────────────────┘</div>
+
+<!-- ═══════════════════ SECTION 4 ═══════════════════ -->
+<h1><span class="section-num">4</span> Feature Breakdown</h1>
+
+<h2>4.1 Authentication System</h2>
+<div class="card">
+  <p>NeuroDocs uses <strong>Supabase Auth</strong> for secure user authentication with JWT (JSON Web Tokens).</p>
+  <table>
+    <tr><th>Feature</th><th>Implementation</th></tr>
+    <tr><td>Sign Up</td><td>Email + password registration via Supabase Auth</td></tr>
+    <tr><td>Login</td><td>JWT-based authentication with access + refresh tokens</td></tr>
+    <tr><td>Logout</td><td>Server-side session invalidation</td></tr>
+    <tr><td>Token Refresh</td><td>Automatic token renewal for seamless sessions</td></tr>
+    <tr><td>Protected Routes</td><td>All API endpoints require <code>Authorization: Bearer &lt;token&gt;</code></td></tr>
+  </table>
+  <p><strong>Endpoints:</strong> <code>/auth/signup</code>, <code>/auth/login</code>, <code>/auth/logout</code>, <code>/auth/refresh</code>, <code>/auth/user</code></p>
+</div>
+
+<h2>4.2 Document Upload & Management</h2>
+<div class="card">
+  <table>
+    <tr><th>Feature</th><th>Implementation</th></tr>
+    <tr><td>Upload</td><td>Accepts PDF, PNG, JPG, DOC, DOCX (up to 10MB)</td></tr>
+    <tr><td>Storage</td><td>Files stored in Supabase Storage bucket</td></tr>
+    <tr><td>Metadata</td><td>File name, type, size, upload time tracked in PostgreSQL</td></tr>
+    <tr><td>Listing</td><td>Paginated document list with filtering</td></tr>
+    <tr><td>Delete</td><td>Removes both storage file and database record</td></tr>
+    <tr><td>Security</td><td>Row Level Security ensures users only see their own documents</td></tr>
+  </table>
+</div>
+
+<h2>4.3 AI Processing Pipeline (Powered by Google Gemini)</h2>
+<div class="card">
+  <p>This is the <strong>core feature</strong> of NeuroDocs. When a document is processed, it goes through three AI-powered stages:</p>
+  
+  <div class="pipeline">
+    <div class="pipeline-step">📄 Upload</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step">🔍 OCR</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step">🤖 Classify</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step">📊 Extract</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step">📝 Summarize</div>
+  </div>
+
+  <h3>Stage 1: OCR (Text Extraction)</h3>
+  <ul>
+    <li><strong>Digital PDFs</strong> → Uses <code>pypdf</code> to extract embedded text (fast, no API call)</li>
+    <li><strong>Scanned/Image files</strong> → Falls back to AI-based extraction</li>
+    <li>Stores extracted text in the <code>ocr_text</code> database field</li>
+  </ul>
+
+  <h3>Stage 2: AI Classification (Gemini 2.0 Flash)</h3>
+  <ul>
+    <li><strong>Fast path:</strong> Keyword-based rules check for common patterns first</li>
+    <li><strong>AI path:</strong> If keywords aren't confident, sends text to Google Gemini for intelligent classification</li>
+    <li>Classifies into: Invoice, Receipt, Contract, Resume, Certificate, Medical Record, Financial Statement, Legal Filing, Report</li>
+    <li>Returns a confidence score (0.0 to 1.0)</li>
+  </ul>
+
+  <h3>Stage 3: Smart Field Extraction (Gemini 2.0 Flash)</h3>
+  <ul>
+    <li>Sends document text + detected type to Gemini AI</li>
+    <li>Gemini intelligently extracts all relevant structured fields</li>
+    <li>Falls back to regex-based extraction if API is unavailable</li>
+  </ul>
+
+  <div class="highlight-box">
+    <strong>Example output for an Invoice:</strong><br>
+    <code>{ "vendor": "Acme Corp", "amount": "$24,500.00", "invoice_no": "INV-2024-1192", "date": "March 7, 2026", "due_date": "March 21, 2026" }</code>
+  </div>
+
+  <h3>Bonus: Document Summarization</h3>
+  <p>Gemini generates a concise 2-4 sentence summary of each document.</p>
+</div>
+
+<h2>4.4 PDF Utility Tools</h2>
+<div class="card">
+  <table>
+    <tr><th>Tool</th><th>What it does</th><th>Endpoint</th></tr>
+    <tr><td><strong>Merge PDFs</strong></td><td>Combines multiple PDFs into one</td><td><code>POST /utilities/merge-pdfs</code></td></tr>
+    <tr><td><strong>Compress</strong></td><td>Lossless ZIP compression of files</td><td><code>POST /utilities/compress</code></td></tr>
+    <tr><td><strong>Convert PDF</strong></td><td>Converts PDF pages to PNG/JPEG</td><td><code>POST /utilities/convert-pdf</code></td></tr>
+  </table>
+</div>
+
+<h2>4.5 SaaS Monetization Layer</h2>
+<div class="card">
+  <table>
+    <tr><th>Feature</th><th>Implementation</th></tr>
+    <tr><td>Plan Tiers</td><td>Free, Pro, Enterprise stored in <code>plan_tiers</code> table</td></tr>
+    <tr><td>Upload Quotas</td><td>Monthly upload limits per plan (enforced server-side)</td></tr>
+    <tr><td>Processing Credits</td><td>Monthly AI processing credits per plan</td></tr>
+    <tr><td>Usage Dashboard</td><td>Real-time tracking of uploads, credits used, success rate</td></tr>
+    <tr><td>Subscription Management</td><td>User subscription tracking with plan status</td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════ SECTION 5 ═══════════════════ -->
+<h1><span class="section-num">5</span> Frontend Pages & Components</h1>
+
+<h2>Pages</h2>
+<table>
+  <tr><th>Page</th><th>Route</th><th>Description</th></tr>
+  <tr><td>Landing Page</td><td><code>/</code></td><td>Hero, features, demo, pricing, CTA, footer</td></tr>
+  <tr><td>Dashboard</td><td><code>/dashboard</code></td><td>Document management, upload, processing results</td></tr>
+  <tr><td>Pricing</td><td><code>/pricing</code></td><td>Dedicated plan comparison page</td></tr>
+  <tr><td>Privacy Policy</td><td><code>/privacy</code></td><td>Legal privacy policy</td></tr>
+  <tr><td>Terms of Service</td><td><code>/terms</code></td><td>Legal terms of service</td></tr>
+  <tr><td>About</td><td><code>/about</code></td><td>Team and project information</td></tr>
+</table>
+
+<h2>Key Components (13 total)</h2>
+<table>
+  <tr><th>Component</th><th>Description</th></tr>
+  <tr><td><code>Hero.tsx</code></td><td>Animated hero with 3D document scene and gradient text</td></tr>
+  <tr><td><code>Features.tsx</code></td><td>Feature cards showcasing all AI tools</td></tr>
+  <tr><td><code>UploadDemo.tsx</code></td><td>Interactive upload demo on landing page</td></tr>
+  <tr><td><code>ToolModal.tsx</code></td><td>Modal for PDF tools (merge, compress, convert, OCR)</td></tr>
+  <tr><td><code>AIPipeline.tsx</code></td><td>Visual AI pipeline representation</td></tr>
+  <tr><td><code>AuthModal.tsx</code></td><td>Sign up / login modal</td></tr>
+  <tr><td><code>DashboardPreview.tsx</code></td><td>Dashboard interface preview</td></tr>
+  <tr><td><code>Pricing.tsx</code></td><td>Pricing tier cards with feature comparison</td></tr>
+  <tr><td><code>Navbar.tsx</code></td><td>Navigation bar with auth state awareness</td></tr>
+  <tr><td><code>Footer.tsx</code></td><td>Site footer with links and branding</td></tr>
+  <tr><td><code>CTA.tsx</code></td><td>Call-to-action section</td></tr>
+  <tr><td><code>TechStack.tsx</code></td><td>Technology stack showcase</td></tr>
+  <tr><td><code>DocumentScene.tsx</code></td><td>Three.js 3D animated floating document</td></tr>
+</table>
+
+<!-- ═══════════════════ SECTION 6 ═══════════════════ -->
+<h1><span class="section-num">6</span> Database Schema</h1>
+
+<h2><code>documents</code> table</h2>
+<table>
+  <tr><th>Column</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>id</code></td><td>UUID</td><td>Primary key</td></tr>
+  <tr><td><code>user_id</code></td><td>UUID</td><td>Foreign key to auth.users</td></tr>
+  <tr><td><code>filename</code></td><td>TEXT</td><td>Original file name</td></tr>
+  <tr><td><code>file_type</code></td><td>TEXT</td><td>pdf, png, jpg, doc, docx</td></tr>
+  <tr><td><code>upload_time</code></td><td>TIMESTAMP</td><td>When the file was uploaded</td></tr>
+  <tr><td><code>processing_status</code></td><td>TEXT</td><td>pending / processing / completed / failed</td></tr>
+  <tr><td><code>storage_url</code></td><td>TEXT</td><td>Supabase Storage public URL</td></tr>
+  <tr><td><code>file_size_bytes</code></td><td>INTEGER</td><td>File size in bytes</td></tr>
+  <tr><td><code>ocr_text</code></td><td>TEXT</td><td>Extracted text from OCR</td></tr>
+  <tr><td><code>classified_type</code></td><td>TEXT</td><td>AI-determined document type</td></tr>
+  <tr><td><code>extracted_fields</code></td><td>JSONB</td><td>Structured fields extracted by AI</td></tr>
+  <tr><td><code>page_count</code></td><td>INTEGER</td><td>Number of pages</td></tr>
+</table>
+
+<h2><code>processing_jobs</code> table</h2>
+<table>
+  <tr><th>Column</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>id</code></td><td>UUID</td><td>Primary key</td></tr>
+  <tr><td><code>document_id</code></td><td>UUID</td><td>FK to documents</td></tr>
+  <tr><td><code>user_id</code></td><td>UUID</td><td>FK to auth.users</td></tr>
+  <tr><td><code>status</code></td><td>TEXT</td><td>pending / processing / completed / failed</td></tr>
+  <tr><td><code>progress</code></td><td>INTEGER</td><td>0-100 percentage</td></tr>
+  <tr><td><code>step</code></td><td>TEXT</td><td>Current pipeline step</td></tr>
+  <tr><td><code>result</code></td><td>JSONB</td><td>Full pipeline result</td></tr>
+  <tr><td><code>error</code></td><td>TEXT</td><td>Error message if failed</td></tr>
+</table>
+
+<h2><code>plan_tiers</code> &amp; <code>user_subscriptions</code> tables</h2>
+<table>
+  <tr><th>Column</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>id</code> / <code>plan_id</code></td><td>TEXT</td><td>free, pro, enterprise</td></tr>
+  <tr><td><code>name</code></td><td>TEXT</td><td>Display name</td></tr>
+  <tr><td><code>monthly_upload_limit</code></td><td>INTEGER</td><td>Max uploads per month</td></tr>
+  <tr><td><code>monthly_processing_credits</code></td><td>INTEGER</td><td>Max AI credits per month</td></tr>
+  <tr><td><code>user_id</code></td><td>UUID</td><td>Foreign key to auth.users</td></tr>
+  <tr><td><code>status</code></td><td>TEXT</td><td>active / cancelled / expired</td></tr>
+</table>
+
+<!-- ═══════════════════ SECTION 7 ═══════════════════ -->
+<h1><span class="section-num">7</span> Security Implementation</h1>
+<table>
+  <tr><th>Security Measure</th><th>How</th></tr>
+  <tr><td><strong>JWT Authentication</strong></td><td>Every API request requires a valid Supabase JWT bearer token</td></tr>
+  <tr><td><strong>Row Level Security</strong></td><td>PostgreSQL RLS ensures users only access their own documents</td></tr>
+  <tr><td><strong>Service Role Separation</strong></td><td>Backend uses service role key for admin ops; anon key for user auth</td></tr>
+  <tr><td><strong>CORS</strong></td><td>Configured to only allow requests from the deployed frontend URL</td></tr>
+  <tr><td><strong>File Validation</strong></td><td>MIME type and file size validated before upload</td></tr>
+  <tr><td><strong>Quota Enforcement</strong></td><td>Server-side enforcement of upload and processing limits</td></tr>
+  <tr><td><strong>Environment Variables</strong></td><td>All secrets stored in environment variables, never in code</td></tr>
+</table>
+
+<!-- ═══════════════════ SECTION 8 ═══════════════════ -->
+<h1><span class="section-num">8</span> Deployment Architecture</h1>
+<div class="arch-diagram">
+GitHub Repository (documind)
+    │
+    ├── git push to main
+    │
+    ├────→ Cloudflare Pages (auto-deploy)
+    │      └── Frontend: https://documind-1g2.pages.dev
+    │
+    └────→ Render (auto-deploy)
+           └── Backend: https://neurodocs-api.onrender.com
+                 └── Environment Variables:
+                     ├── SUPABASE_URL
+                     ├── SUPABASE_SERVICE_ROLE_KEY
+                     ├── GEMINI_API_KEY
+                     └── CORS_ORIGINS</div>
+
+<div class="highlight-box">
+  <strong>CI/CD Flow:</strong> Push code to <code>main</code> branch → Cloudflare rebuilds frontend automatically → Render rebuilds backend automatically → Zero-downtime deployment.
+</div>
+
+<!-- ═══════════════════ SECTION 9 ═══════════════════ -->
+<h1><span class="section-num">9</span> API Endpoints Summary</h1>
+<table>
+  <tr><th>Endpoint</th><th>Method</th><th>Description</th></tr>
+  <tr><td><code>/auth/signup</code></td><td>POST</td><td>Create a new account</td></tr>
+  <tr><td><code>/auth/login</code></td><td>POST</td><td>Sign in and receive JWT</td></tr>
+  <tr><td><code>/auth/logout</code></td><td>POST</td><td>Invalidate session</td></tr>
+  <tr><td><code>/auth/refresh</code></td><td>POST</td><td>Refresh access token</td></tr>
+  <tr><td><code>/auth/user</code></td><td>GET</td><td>Get authenticated user profile</td></tr>
+  <tr><td><code>/upload</code></td><td>POST</td><td>Upload a document file</td></tr>
+  <tr><td><code>/documents</code></td><td>GET</td><td>List user's documents (paginated)</td></tr>
+  <tr><td><code>/documents/{id}</code></td><td>GET</td><td>Get document details</td></tr>
+  <tr><td><code>/documents/{id}</code></td><td>DELETE</td><td>Delete a document</td></tr>
+  <tr><td><code>/process-document</code></td><td>POST</td><td>Full AI pipeline (sync)</td></tr>
+  <tr><td><code>/process-document-async</code></td><td>POST</td><td>Full AI pipeline (background)</td></tr>
+  <tr><td><code>/jobs/{job_id}</code></td><td>GET</td><td>Poll async job status</td></tr>
+  <tr><td><code>/ocr</code></td><td>POST</td><td>OCR only</td></tr>
+  <tr><td><code>/classify-document</code></td><td>POST</td><td>Classification only</td></tr>
+  <tr><td><code>/extract-fields</code></td><td>POST</td><td>Field extraction only</td></tr>
+  <tr><td><code>/smart-classify/file</code></td><td>POST</td><td>Upload + classify + extract</td></tr>
+  <tr><td><code>/smart-classify/text</code></td><td>POST</td><td>Classify + extract from text</td></tr>
+  <tr><td><code>/utilities/merge-pdfs</code></td><td>POST</td><td>Merge multiple PDFs</td></tr>
+  <tr><td><code>/utilities/compress</code></td><td>POST</td><td>Compress files to ZIP</td></tr>
+  <tr><td><code>/utilities/convert-pdf</code></td><td>POST</td><td>Convert PDF to images</td></tr>
+  <tr><td><code>/usage/plans</code></td><td>GET</td><td>List available plans</td></tr>
+  <tr><td><code>/usage/subscription</code></td><td>GET</td><td>Get user subscription</td></tr>
+  <tr><td><code>/usage/dashboard</code></td><td>GET</td><td>Get usage statistics</td></tr>
+</table>
+
+<!-- ═══════════════════ SECTION 10 ═══════════════════ -->
+<h1><span class="section-num">10</span> What Makes This Project Special</h1>
+<div class="card">
+  <ol style="font-size: 15px; line-height: 2;">
+    <li><strong>Real AI Integration</strong> — Uses Google Gemini 2.0 Flash for production-grade document understanding</li>
+    <li><strong>Full SaaS Architecture</strong> — Complete monetization layer with plans, quotas, and usage tracking</li>
+    <li><strong>Production-Ready Security</strong> — JWT auth, Row Level Security, CORS, service role separation</li>
+    <li><strong>Beautiful UI</strong> — Glassmorphism, 3D animations, gradient effects, fully responsive</li>
+    <li><strong>Scalable Architecture</strong> — Stateless backend, cloud database, CDN-served frontend</li>
+    <li><strong>Smart Fallbacks</strong> — Every AI feature has graceful fallbacks if the API is unavailable</li>
+    <li><strong>Auto-Deploy CI/CD</strong> — Push to GitHub → automatically live on the internet</li>
+  </ol>
+</div>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<div class="footer">
+  <p><strong>NeuroDocs</strong> — Intelligent Document AI for Modern Teams</p>
+  <p>Built by Harshwardhan Bhaskar · March 2026</p>
+  <p style="margin-top:8px;">Next.js · FastAPI · Supabase · Google Gemini AI · Cloudflare · Render</p>
+</div>
+
+</div>
+</body>
+</html>

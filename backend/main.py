@@ -1,7 +1,7 @@
 """
 main.py
 ──────────────────────────────────────────────────────────────────────────────
-DocuMind FastAPI application entrypoint.
+NeuroDocs FastAPI application entrypoint.
 
 Run in development:
     uvicorn main:app --reload --host 0.0.0.0 --port 8000
@@ -28,13 +28,13 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s  %(levelname)s  %(name)s  %(message)s",
 )
-logger = logging.getLogger("documind")
+logger = logging.getLogger("neurodocs")
 
 # ─── App ──────────────────────────────────────────────────────────────────────
 app = FastAPI(
-    title="DocuMind – Intelligent Document Toolkit API",
+    title="NeuroDocs – Intelligent Document Toolkit API",
     description=(
-        "REST API for DocuMind: upload, OCR, AI classify, and extract "
+        "REST API for NeuroDocs: upload, OCR, AI classify, and extract "
         "structured data from PDF / image documents.  All endpoints are "
         "protected with Supabase JWT bearer authentication."
     ),
@@ -42,8 +42,8 @@ app = FastAPI(
     docs_url="/docs",
     redoc_url="/redoc",
     contact={
-        "name":  "DocuMind Team",
-        "email": "support@documind.ai",
+        "name":  "NeuroDocs Team",
+        "email": "support@neurodocs.ai",
     },
     license_info={
         "name": "MIT",
@@ -51,9 +51,13 @@ app = FastAPI(
 )
 
 # ─── CORS ─────────────────────────────────────────────────────────────────────
-# In production replace "*" with your exact frontend origin,
-# e.g. "https://app.documind.ai"
-_CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
+# In production replace this with your exact frontend origin(s),
+# e.g. "https://app.neurodocs.ai,https://www.neurodocs.ai"
+_CORS_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
+    if origin.strip()
+]
 
 app.add_middleware(
     CORSMiddleware,
@@ -78,7 +82,7 @@ app.include_router(smart_classify.router)
 async def root():
     return {
         "status":  "ok",
-        "service": "DocuMind API",
+        "service": "NeuroDocs API",
         "version": "1.0.0",
         "docs":    "/docs",
     }
@@ -92,7 +96,7 @@ async def health():
 # ─── Startup / shutdown events ────────────────────────────────────────────────
 @app.on_event("startup")
 async def on_startup():
-    logger.info("DocuMind API starting up…")
+    logger.info("NeuroDocs API starting up…")
     # Validate that required env vars are present at startup
     required = ["SUPABASE_URL", "SUPABASE_ANON_KEY", "SUPABASE_SERVICE_ROLE_KEY"]
     missing  = [k for k in required if not os.getenv(k)]
@@ -105,7 +109,7 @@ async def on_startup():
 
 @app.on_event("shutdown")
 async def on_shutdown():
-    logger.info("DocuMind API shutting down.")
+    logger.info("NeuroDocs API shutting down.")
 
 
 # ─── Dev entrypoint ───────────────────────────────────────────────────────────

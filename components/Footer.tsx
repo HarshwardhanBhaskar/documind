@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import Link from 'next/link';
 import { FileText, Github, Linkedin, Twitter } from 'lucide-react';
@@ -7,23 +7,12 @@ const nav = {
     Product: [
         { label: 'Features', href: '/#features' },
         { label: 'AI Tools', href: '/#tools' },
-        { label: 'Pricing', href: '/#pricing' },
-        { label: 'Changelog', href: '/changelog' },
-        { label: 'Roadmap', href: '/roadmap' },
-    ],
-    Documentation: [
-        { label: 'Getting Started', href: '/docs/getting-started' },
-        { label: 'API Reference', href: '/docs/api-reference' },
-        { label: 'Guides', href: '/docs/guides' },
-        { label: 'Integrations', href: '/docs/integrations' },
-        { label: 'SDKs', href: '/docs/sdks' },
+        { label: 'Pricing', href: '/pricing' },
     ],
     Company: [
         { label: 'About', href: '/about' },
-        { label: 'Blog', href: '/blog' },
-        { label: 'Careers', href: '/careers' },
-        { label: 'Security', href: '/security' },
         { label: 'Privacy Policy', href: '/privacy' },
+        { label: 'Terms of Service', href: '/terms' },
     ],
 } as const;
 
@@ -47,12 +36,12 @@ export default function Footer() {
             <div className="max-w-7xl mx-auto px-6">
                 <div className="grid grid-cols-2 md:grid-cols-6 gap-10 mb-16">
                     <div className="col-span-2 flex flex-col gap-5">
-                        <Link href="/" className="flex items-center gap-2.5 w-fit" aria-label="DocuMind">
+                        <Link href="/" className="flex items-center gap-2.5 w-fit" aria-label="NeuroDocs">
                             <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#6366F1,#A78BFA)' }}>
                                 <FileText className="w-[18px] h-[18px] text-white" />
                             </div>
                             <span className="font-black text-[1.1rem] text-white tracking-tight">
-                                Docu<span className="gradient-text">Mind</span>
+                                Neuro<span className="gradient-text">Docs</span>
                             </span>
                         </Link>
 
@@ -111,7 +100,7 @@ export default function Footer() {
 
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
                     <p className="text-xs" style={{ color: 'rgba(241,245,249,0.18)' }}>
-                        © {year} DocuMind, Inc. All rights reserved.
+                        © {year} NeuroDocs, Inc. All rights reserved.
                     </p>
                     <div className="flex gap-6">
                         <Link href="/terms" className="text-xs transition-colors duration-200" style={{ color: 'rgba(241,245,249,0.18)' }}>

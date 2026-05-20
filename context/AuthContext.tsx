@@ -1,25 +1,45 @@
 /**
  * context/AuthContext.tsx
- * ──────────────────────────────────────────────────────────────────────────
- * Auth context using the Supabase JS SDK directly.
- * — Signup / login / logout work WITHOUT the FastAPI backend running.
- * — Once logged in, the Supabase session token is also forwarded to
- *   the FastAPI backend for document upload & processing.
+ * Frontend auth state backed by the FastAPI auth endpoints.
+ *
+ * Keeping browser auth behind our API avoids direct client-side dependency on
+ * Supabase DNS/CORS and makes the rest of the app use one backend origin.
  */
 'use client';
 
 import {
-    createContext, useCallback, useContext, useEffect, useState,
+    createContext, useCallback, useContext, useEffect, useMemo, useState,
 } from 'react';
-import type { Session, User } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase';
+import { authApi } from '@/lib/api';
+import type { TokenResponse, UserResponse } from '@/lib/api';
 
-// ── Types ──────────────────────────────────────────────────────────────────────
+type AuthUser = {
+    id: string;
+    email: string;
+    user_metadata: {
+        full_name?: string | null;
+    };
+};
+
+type AuthSession = {
+    access_token: string;
+    refresh_token: string | null;
+    expires_in: number;
+};
+
+interface StoredAuth {
+    access_token: string;
+    refresh_token: string | null;
+    expires_in: number;
+    user_id: string;
+    email?: string;
+    full_name?: string | null;
+}
 
 interface AuthContextValue {
-    user: User | null;
-    session: Session | null;
-    token: string | null;       // access_token for FastAPI calls
+    user: AuthUser | null;
+    session: AuthSession | null;
+    token: string | null;
     loading: boolean;
     isAuth: boolean;
     login: (email: string, password: string) => Promise<void>;
@@ -27,71 +47,145 @@ interface AuthContextValue {
     logout: () => Promise<void>;
 }
 
+const STORAGE_KEY = 'neurodocs-auth';
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-// ── Provider ───────────────────────────────────────────────────────────────────
+function toUser(data: UserResponse | StoredAuth): AuthUser {
+    const id = 'id' in data ? data.id : data.user_id;
+
+    return {
+        id,
+        email: data.email ?? '',
+        user_metadata: {
+            full_name: data.full_name ?? null,
+        },
+    };
+}
+
+function toStoredAuth(token: TokenResponse, email?: string, fullName?: string | null): StoredAuth {
+    return {
+        access_token: token.access_token,
+        refresh_token: token.refresh_token,
+        expires_in: token.expires_in,
+        user_id: token.user_id,
+        email,
+        full_name: fullName ?? null,
+    };
+}
+
+function toSession(data: StoredAuth): AuthSession {
+    return {
+        access_token: data.access_token,
+        refresh_token: data.refresh_token,
+        expires_in: data.expires_in,
+    };
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [user, setUser] = useState<User | null>(null);
-    const [session, setSession] = useState<Session | null>(null);
+    const [user, setUser] = useState<AuthUser | null>(null);
+    const [session, setSession] = useState<AuthSession | null>(null);
     const [loading, setLoading] = useState(true);
 
-    // Restore session on mount + listen for auth changes
-    useEffect(() => {
-        // Get current session
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session);
-            setUser(session?.user ?? null);
-            setLoading(false);
-        });
-
-        // Subscribe to auth state changes (login, logout, token refresh)
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(
-            (_event, session) => {
-                setSession(session);
-                setUser(session?.user ?? null);
-                setLoading(false);
-            }
-        );
-
-        return () => subscription.unsubscribe();
+    const applyAuth = useCallback((stored: StoredAuth) => {
+        setSession(toSession(stored));
+        setUser(toUser(stored));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
     }, []);
+
+    const clearAuth = useCallback(() => {
+        setUser(null);
+        setSession(null);
+        localStorage.removeItem(STORAGE_KEY);
+    }, []);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        async function restoreSession() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return;
+
+                const stored = JSON.parse(raw) as StoredAuth;
+                if (!stored.access_token) return;
+
+                setSession(toSession(stored));
+                setUser(toUser(stored));
+
+                const remoteUser = await authApi.getUser(stored.access_token);
+                if (cancelled) return;
+
+                const refreshed: StoredAuth = {
+                    ...stored,
+                    user_id: remoteUser.id,
+                    email: remoteUser.email,
+                    full_name: remoteUser.full_name,
+                };
+                applyAuth(refreshed);
+            } catch {
+                if (!cancelled) clearAuth();
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        }
+
+        restoreSession();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [applyAuth, clearAuth]);
 
     const login = useCallback(async (email: string, password: string) => {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw new Error(error.message);
-    }, []);
+        const token = await authApi.login(email, password);
+        if (!token.access_token) {
+            throw new Error('Login failed. Please try again.');
+        }
+
+        const userProfile = await authApi.getUser(token.access_token);
+        applyAuth(toStoredAuth(token, userProfile.email, userProfile.full_name));
+    }, [applyAuth]);
 
     const signup = useCallback(async (email: string, password: string, name?: string) => {
-        const { error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: { data: { full_name: name } },
-        });
-        if (error) throw new Error(error.message);
-    }, []);
+        const token = await authApi.signup(email, password, name);
+        if (!token.access_token) {
+            throw new Error('Account created. Please confirm your email before logging in.');
+        }
+
+        const userProfile = await authApi.getUser(token.access_token);
+        applyAuth(toStoredAuth(token, userProfile.email, userProfile.full_name));
+    }, [applyAuth]);
 
     const logout = useCallback(async () => {
-        await supabase.auth.signOut();
-    }, []);
+        const accessToken = session?.access_token;
+        clearAuth();
+
+        if (accessToken) {
+            try {
+                await authApi.logout(accessToken);
+            } catch {
+                // Local logout should still succeed even if the remote session is already invalid.
+            }
+        }
+    }, [clearAuth, session?.access_token]);
+
+    const value = useMemo<AuthContextValue>(() => ({
+        user,
+        session,
+        token: session?.access_token ?? null,
+        loading,
+        isAuth: Boolean(session?.access_token && user),
+        login,
+        signup,
+        logout,
+    }), [loading, login, logout, session, signup, user]);
 
     return (
-        <AuthContext.Provider value={{
-            user,
-            session,
-            token: session?.access_token ?? null,
-            loading,
-            isAuth: Boolean(session?.user),
-            login,
-            signup,
-            logout,
-        }}>
+        <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>
     );
 }
-
-// ── Hook ───────────────────────────────────────────────────────────────────────
 
 export function useAuth(): AuthContextValue {
     const ctx = useContext(AuthContext);

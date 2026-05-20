@@ -24,14 +24,14 @@ const pages: Record<string, PageContent> = {
     category: 'Company',
     title: 'About',
     strapline: 'A Product Team Built Around Reliability',
-    description: 'Learn what DocuMind is building and why it exists.',
+    description: 'Learn what NeuroDocs is building and why it exists.',
     updated: 'March 12, 2026',
     highlights: ['Mission first', 'Enterprise ready', 'API driven'],
     sections: [
       {
         heading: 'What We Build',
         body: [
-          'DocuMind is a document intelligence platform for teams that need OCR, classification, and structured extraction with production-grade reliability.',
+          'NeuroDocs is a document intelligence platform for teams that need OCR, classification, and structured extraction with production-grade reliability.',
           'The goal is to reduce manual document handling and help operations teams process files faster with clear auditability.',
         ],
       },
@@ -49,14 +49,14 @@ const pages: Record<string, PageContent> = {
     category: 'Legal',
     title: 'Privacy Policy',
     strapline: 'Your Data Remains Your Data',
-    description: 'How DocuMind handles, stores, and protects personal data.',
+    description: 'How NeuroDocs handles, stores, and protects personal data.',
     updated: 'March 12, 2026',
     highlights: ['Data minimization', 'Encrypted transport', 'Retention controls'],
     sections: [
       {
         heading: 'Data We Process',
         body: [
-          'DocuMind processes document files and metadata needed to deliver OCR, classification, and extraction features.',
+          'NeuroDocs processes document files and metadata needed to deliver OCR, classification, and extraction features.',
           'Only data required for service operation, support, billing, and security monitoring is retained.',
         ],
       },
@@ -74,14 +74,14 @@ const pages: Record<string, PageContent> = {
     category: 'Legal',
     title: 'Terms of Service',
     strapline: 'Clear Usage Terms For Every Workspace',
-    description: 'The agreement governing use of DocuMind services.',
+    description: 'The agreement governing use of NeuroDocs services.',
     updated: 'March 12, 2026',
     highlights: ['Usage rules', 'Plan limits', 'Liability framework'],
     sections: [
       {
         heading: 'Service Access',
         body: [
-          'By using DocuMind, you agree to use the platform in compliance with all applicable laws and internal policies.',
+          'By using NeuroDocs, you agree to use the platform in compliance with all applicable laws and internal policies.',
           'Account owners are responsible for activity under their workspace, including team member access management.',
         ],
       },
@@ -99,7 +99,7 @@ const pages: Record<string, PageContent> = {
     category: 'Legal',
     title: 'Cookie Policy',
     strapline: 'Transparent Preferences And Tracking Controls',
-    description: 'How cookies and similar technologies are used by DocuMind.',
+    description: 'How cookies and similar technologies are used by NeuroDocs.',
     updated: 'March 12, 2026',
     highlights: ['Session security', 'Analytics clarity', 'Browser controls'],
     sections: [
@@ -172,7 +172,7 @@ const pages: Record<string, PageContent> = {
     category: 'Company',
     title: 'Blog',
     strapline: 'Technical Learnings From Real Document Workflows',
-    description: 'Insights, product notes, and technical deep dives from DocuMind.',
+    description: 'Insights, product notes, and technical deep dives from NeuroDocs.',
     updated: 'March 12, 2026',
     highlights: ['Engineering stories', 'Use cases', 'Architecture notes'],
     sections: [
@@ -221,7 +221,7 @@ const pages: Record<string, PageContent> = {
     category: 'Company',
     title: 'Security',
     strapline: 'Defense In Depth For Documents And Workspaces',
-    description: 'How DocuMind approaches application and data security.',
+    description: 'How NeuroDocs approaches application and data security.',
     updated: 'March 12, 2026',
     highlights: ['Least privilege', 'Incident response', 'Continuous hardening'],
     sections: [
@@ -262,17 +262,18 @@ export function generateStaticParams() {
     .map((slug) => ({ slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const data = pages[params.slug];
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const data = pages[slug];
   if (!data) {
     return {
-      title: 'Page Not Found | DocuMind',
+      title: 'Page Not Found | NeuroDocs',
       description: 'The page you requested does not exist.',
     };
   }
 
   return {
-    title: `${data.title} | DocuMind`,
+    title: `${data.title} | NeuroDocs`,
     description: data.description,
   };
 }
@@ -289,25 +290,34 @@ function labelForPath(path: string) {
   return pages[path]?.title ?? path;
 }
 
-export default function CompanyPage({ params }: { params: { slug: string } }) {
-  const data = pages[params.slug];
+const illustrationMap: Record<string, string> = {
+  about: '/about_illustration.png',
+  careers: '/careers_illustration.png',
+  roadmap: '/roadmap_illustration.png',
+  security: '/security_illustration.png',
+};
+
+export default async function CompanyPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const data = pages[slug];
   if (!data) {
     notFound();
   }
-  const theme = themes[params.slug];
+  const theme = themes[slug];
+  const illustration = illustrationMap[slug];
 
   return (
     <main
-      className="relative overflow-hidden"
-      style={{ minHeight: '100vh', background: '#0A0A0A', color: '#F1F5F9' }}
+      className="relative overflow-hidden bg-[var(--bg)] text-[var(--text-primary)] transition-colors duration-300"
+      style={{ minHeight: '100vh' }}
     >
       <div
-        className="pointer-events-none absolute -top-20 left-1/2 -translate-x-1/2 h-80 w-[40rem] blur-3xl"
+        className="pointer-events-none absolute -top-20 left-1/2 -translate-x-1/2 h-80 w-[40rem] blur-3xl opacity-60 dark:opacity-100"
         style={{ background: `linear-gradient(120deg, ${theme.from}, ${theme.to})` }}
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute -bottom-20 right-0 h-72 w-72 rounded-full blur-3xl"
+        className="pointer-events-none absolute -bottom-20 right-0 h-72 w-72 rounded-full blur-3xl opacity-30 dark:opacity-60"
         style={{ background: theme.to }}
         aria-hidden="true"
       />
@@ -315,57 +325,71 @@ export default function CompanyPage({ params }: { params: { slug: string } }) {
       <div className="cx py-12 md:py-16">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-sm font-semibold"
-          style={{ color: 'rgba(241,245,249,0.7)' }}
+          className="inline-flex items-center gap-2 text-sm font-semibold hover:text-[var(--text-primary)] transition-colors duration-200"
+          style={{ color: 'var(--text-secondary)' }}
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Home
         </Link>
 
         <section
-          className="mt-6 rounded-3xl p-7 md:p-10"
+          className="mt-6 rounded-3xl p-7 md:p-10 bg-[var(--bg-card)] border border-[var(--border)] transition-all duration-300"
           style={{
-            background: 'rgba(255,255,255,0.03)',
-            border: `1px solid ${theme.ring}`,
-            boxShadow: `0 30px 70px rgba(0,0,0,0.45), 0 0 0 1px ${theme.from}`,
+            boxShadow: '0 30px 70px var(--dashboard-shadow)',
           }}
         >
-          <p className="text-xs uppercase tracking-[0.2em]" style={{ color: 'rgba(241,245,249,0.52)' }}>
-            {data.category}
-          </p>
-          <h1 className="mt-3 text-3xl md:text-5xl font-black tracking-tight">{data.title}</h1>
-          <p className="mt-3 text-sm md:text-base leading-7" style={{ color: 'rgba(241,245,249,0.75)' }}>
-            {data.strapline}
-          </p>
-          <p className="mt-4 max-w-2xl text-sm md:text-base leading-7" style={{ color: 'rgba(241,245,249,0.62)' }}>
-            {data.description}
-          </p>
+          <div className={illustration ? 'grid grid-cols-1 lg:grid-cols-12 gap-8 items-center' : 'flex flex-col'}>
+            <div className={illustration ? 'lg:col-span-7 flex flex-col justify-center' : 'flex flex-col'}>
+              <p className="text-xs uppercase tracking-[0.2em] font-semibold" style={{ color: 'var(--text-secondary)' }}>
+                {data.category}
+              </p>
+              <h1 className="mt-3 text-3xl md:text-5xl font-black tracking-tight text-[var(--text-primary)]">{data.title}</h1>
+              <p className="mt-3 text-sm md:text-base leading-7 font-medium" style={{ color: 'var(--text-secondary)' }}>
+                {data.strapline}
+              </p>
+              <p className="mt-4 max-w-2xl text-sm md:text-base leading-7" style={{ color: 'var(--text-muted)' }}>
+                {data.description}
+              </p>
 
-          <div className="mt-6 flex flex-wrap gap-2.5">
-            {data.highlights.map((pill) => (
-              <span
-                key={pill}
-                className="rounded-full px-3 py-1 text-xs font-semibold"
-                style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.14)' }}
-              >
-                {pill}
-              </span>
-            ))}
-          </div>
+              <div className="mt-6 flex flex-wrap gap-2.5">
+                {data.highlights.map((pill) => (
+                  <span
+                    key={pill}
+                    className="rounded-full px-3 py-1 text-xs font-semibold bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text-primary)] hover:border-indigo-500/30 transition-colors"
+                  >
+                    {pill}
+                  </span>
+                ))}
+              </div>
 
-          <div className="mt-7 grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="rounded-xl p-4" style={{ background: 'rgba(255,255,255,0.035)', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <p className="text-xs uppercase tracking-[0.15em]" style={{ color: 'rgba(241,245,249,0.5)' }}>Last Updated</p>
-              <p className="mt-2 text-sm font-semibold">{data.updated}</p>
+              <div className="mt-7 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="rounded-xl p-4 bg-[var(--bg-card)] border border-[var(--border)]">
+                  <p className="text-xs uppercase tracking-[0.15em]" style={{ color: 'var(--text-secondary)' }}>Last Updated</p>
+                  <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">{data.updated}</p>
+                </div>
+                <div className="rounded-xl p-4 bg-[var(--bg-card)] border border-[var(--border)]">
+                  <p className="text-xs uppercase tracking-[0.15em]" style={{ color: 'var(--text-secondary)' }}>Sections</p>
+                  <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">{data.sections.length} Topics</p>
+                </div>
+                <div className="rounded-xl p-4 bg-[var(--bg-card)] border border-[var(--border)]">
+                  <p className="text-xs uppercase tracking-[0.15em]" style={{ color: 'var(--text-secondary)' }}>Reference Docs</p>
+                  <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">Available in Footer</p>
+                </div>
+              </div>
             </div>
-            <div className="rounded-xl p-4" style={{ background: 'rgba(255,255,255,0.035)', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <p className="text-xs uppercase tracking-[0.15em]" style={{ color: 'rgba(241,245,249,0.5)' }}>Sections</p>
-              <p className="mt-2 text-sm font-semibold">{data.sections.length} Topics</p>
-            </div>
-            <div className="rounded-xl p-4" style={{ background: 'rgba(255,255,255,0.035)', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <p className="text-xs uppercase tracking-[0.15em]" style={{ color: 'rgba(241,245,249,0.5)' }}>Reference Docs</p>
-              <p className="mt-2 text-sm font-semibold">Available in Footer</p>
-            </div>
+
+            {illustration && (
+              <div className="lg:col-span-5 flex justify-center items-center">
+                <div className="relative group w-full max-w-xs sm:max-w-sm aspect-square flex items-center justify-center rounded-2xl glass p-4 float-anim transition-all duration-500 hover:scale-[1.03] hover:shadow-[0_20px_50px_rgba(99,102,241,0.12)]">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-[var(--indigo)] to-[var(--violet)] opacity-10 blur-xl rounded-2xl group-hover:opacity-20 transition-opacity duration-500" />
+                  <img
+                    src={illustration}
+                    alt={`${data.title} Illustration`}
+                    className="w-full h-full object-contain relative z-10 drop-shadow-[0_10px_20px_rgba(0,0,0,0.12)] group-hover:rotate-2 transition-transform duration-500"
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </section>
 
@@ -375,11 +399,10 @@ export default function CompanyPage({ params }: { params: { slug: string } }) {
               <article
                 id={`section-${index + 1}`}
                 key={section.heading}
-                className="rounded-2xl p-6 md:p-7"
-                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}
+                className="rounded-2xl p-6 md:p-7 bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text-primary)] transition-all duration-300 hover:border-indigo-500/20"
               >
                 <h2 className="text-xl font-bold">{section.heading}</h2>
-                <div className="mt-3 space-y-3 text-sm md:text-base leading-7" style={{ color: 'rgba(241,245,249,0.72)' }}>
+                <div className="mt-3 space-y-3 text-sm md:text-base leading-7" style={{ color: 'var(--text-secondary)' }}>
                   {section.body.map((line) => (
                     <p key={line}>{line}</p>
                   ))}
@@ -389,8 +412,8 @@ export default function CompanyPage({ params }: { params: { slug: string } }) {
           </div>
 
           <aside className="lg:sticky lg:top-8 h-fit space-y-4">
-            <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <p className="text-xs uppercase tracking-[0.2em]" style={{ color: 'rgba(241,245,249,0.45)' }}>
+            <div className="rounded-2xl p-5 bg-[var(--bg-card)] border border-[var(--border)]">
+              <p className="text-xs uppercase tracking-[0.2em]" style={{ color: 'var(--text-secondary)' }}>
                 On This Page
               </p>
               <div className="mt-4 space-y-2">
@@ -398,8 +421,8 @@ export default function CompanyPage({ params }: { params: { slug: string } }) {
                   <a
                     key={section.heading}
                     href={`#section-${index + 1}`}
-                    className="block rounded-lg px-3 py-2 text-sm transition-colors"
-                    style={{ color: 'rgba(241,245,249,0.8)', background: 'rgba(255,255,255,0.02)' }}
+                    className="block rounded-lg px-3 py-2 text-sm transition-colors hover:text-[var(--text-primary)] hover:bg-[var(--border)]"
+                    style={{ color: 'var(--text-secondary)', background: 'var(--bg-card)', border: '1px solid var(--border)' }}
                   >
                     {section.heading}
                   </a>
@@ -407,8 +430,8 @@ export default function CompanyPage({ params }: { params: { slug: string } }) {
               </div>
             </div>
 
-            <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <p className="text-xs uppercase tracking-[0.2em]" style={{ color: 'rgba(241,245,249,0.45)' }}>
+            <div className="rounded-2xl p-5 bg-[var(--bg-card)] border border-[var(--border)]">
+              <p className="text-xs uppercase tracking-[0.2em]" style={{ color: 'var(--text-secondary)' }}>
                 Explore More
               </p>
               <div className="mt-4 space-y-2">
@@ -416,8 +439,8 @@ export default function CompanyPage({ params }: { params: { slug: string } }) {
                   <Link
                     key={path}
                     href={path.startsWith('docs/') ? `/${path}` : `/${path}`}
-                    className="flex items-center justify-between rounded-lg px-3 py-2 text-sm"
-                    style={{ color: 'rgba(241,245,249,0.85)', background: 'rgba(255,255,255,0.02)' }}
+                    className="flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors hover:text-[var(--text-primary)] hover:bg-[var(--border)] border border-[var(--border)]"
+                    style={{ color: 'var(--text-secondary)', background: 'var(--bg-card)' }}
                   >
                     {labelForPath(path)}
                     <ArrowUpRight className="h-3.5 w-3.5" />
@@ -429,27 +452,27 @@ export default function CompanyPage({ params }: { params: { slug: string } }) {
         </section>
 
         <section
-          className="mt-8 rounded-3xl p-6 md:p-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
-          style={{ background: 'linear-gradient(120deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015))', border: '1px solid rgba(255,255,255,0.1)' }}
+          className="mt-8 rounded-3xl p-6 md:p-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between bg-[var(--bg-card)] border border-[var(--border)]"
+          style={{ boxShadow: '0 20px 40px var(--dashboard-shadow)' }}
         >
           <div>
-            <h3 className="text-xl font-bold">Need implementation details?</h3>
-            <p className="mt-2 text-sm" style={{ color: 'rgba(241,245,249,0.68)' }}>
+            <h3 className="text-xl font-bold text-[var(--text-primary)]">Need implementation details?</h3>
+            <p className="mt-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
               Jump into technical docs and API references for practical integration steps.
             </p>
           </div>
           <div className="flex gap-3">
             <Link
               href="/docs/getting-started"
-              className="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-semibold"
-              style={{ background: 'rgba(99,102,241,0.18)', border: '1px solid rgba(129,140,248,0.45)', color: '#C7D2FE' }}
+              className="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-semibold border transition-all duration-300"
+              style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glow)', color: 'var(--text-primary)' }}
             >
               Open Docs
             </Link>
             <Link
               href="/#pricing"
-              className="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-semibold"
-              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.13)', color: '#E2E8F0' }}
+              className="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-semibold border transition-all duration-300"
+              style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
             >
               View Pricing
             </Link>

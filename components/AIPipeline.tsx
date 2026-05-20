@@ -56,7 +56,7 @@ export default function AIPipeline() {
             {/* Background glow */}
             <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] rounded-full"
-                    style={{ background: 'radial-gradient(ellipse, rgba(99,102,241,0.07) 0%, transparent 70%)' }} />
+                    style={{ background: 'radial-gradient(ellipse, rgba(99,102,241,0.05) 0%, transparent 70%)' }} />
             </div>
 
             <div className="max-w-7xl mx-auto px-6 relative z-10">
@@ -70,12 +70,12 @@ export default function AIPipeline() {
                     className="flex flex-col items-center text-center mb-16"
                 >
                     <div className="flex items-center gap-2 px-4 py-1.5 rounded-full mb-5"
-                        style={{ background: 'rgba(34,211,238,0.08)', border: '1px solid rgba(34,211,238,0.18)', backdropFilter: 'blur(16px)' }}>
-                        <BrainCircuit className="w-3.5 h-3.5 text-cyan-400" />
-                        <span className="text-badge" style={{ color: 'rgba(34,211,238,0.72)' }}>AI Processing Pipeline</span>
+                        style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glow)', backdropFilter: 'blur(16px)' }}>
+                        <BrainCircuit className="w-3.5 h-3.5" style={{ color: 'var(--cyan)' }} />
+                        <span className="text-badge" style={{ color: 'var(--cyan)' }}>AI Processing Pipeline</span>
                     </div>
 
-                    <h2 className="text-h2 text-white mb-4 max-w-2xl">
+                    <h2 className="text-h2 mb-4 max-w-2xl" style={{ color: 'var(--text-primary)' }}>
                         From upload to{' '}
                         <span className="gradient-text">structured intelligence</span>
                     </h2>
@@ -103,8 +103,8 @@ export default function AIPipeline() {
                                 className="card-hover group relative rounded-2xl overflow-hidden"
                                 style={{
                                     padding: '1.75rem',
-                                    background: 'rgba(255,255,255,0.035)',
-                                    border: '1px solid rgba(255,255,255,0.08)',
+                                    background: 'var(--bg-card)',
+                                    border: '1px solid var(--border)',
                                     backdropFilter: 'blur(20px)',
                                 }}
                             >
@@ -121,25 +121,25 @@ export default function AIPipeline() {
                                 <div className="relative z-10">
                                     {/* Icon */}
                                     <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5"
-                                        style={{ background: `linear-gradient(135deg, ${s.color}22, ${s.color}44)`, border: `1px solid ${s.color}33` }}>
+                                        style={{ background: `${s.color}18`, border: `1px solid ${s.color}33` }}>
                                         <Icon className="w-5 h-5" style={{ color: s.color }} />
                                     </div>
 
-                                    <h3 className="text-h3 text-white mb-2">{s.title}</h3>
+                                    <h3 className="text-h3 mb-2" style={{ color: 'var(--text-primary)' }}>{s.title}</h3>
                                     <p className="text-muted text-sm leading-relaxed">{s.description}</p>
 
                                     {/* Connector arrow (not on last) */}
                                     {i < STEPS.length - 1 && (
                                         <div className="hidden lg:flex absolute -right-3 top-1/2 -translate-y-1/2 z-20">
-                                            <ArrowRight className="w-5 h-5 text-slate-600" />
+                                            <ArrowRight className="w-5 h-5" style={{ color: 'var(--text-muted)' }} />
                                         </div>
                                     )}
 
                                     {/* Check on complete */}
                                     {i === STEPS.length - 1 && (
                                         <div className="mt-4 flex items-center gap-1.5">
-                                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                                            <span className="text-xs text-emerald-400 font-semibold">Output ready</span>
+                                            <CheckCircle2 className="w-3.5 h-3.5" style={{ color: 'var(--emerald)' }} />
+                                            <span className="text-xs font-semibold" style={{ color: 'var(--emerald)' }}>Output ready</span>
                                         </div>
                                     )}
                                 </div>
@@ -148,7 +148,7 @@ export default function AIPipeline() {
                     })}
                 </motion.div>
 
-                {/* Sample output card */}
+                {/* Sample output card with integrated premium illustration */}
                 <motion.div
                     initial={{ opacity: 0, y: 32 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -156,21 +156,33 @@ export default function AIPipeline() {
                     transition={{ duration: 0.65, delay: 0.3 }}
                     className="mt-12 rounded-2xl overflow-hidden"
                     style={{
-                        background: 'rgba(255,255,255,0.025)',
-                        border: '1px solid rgba(255,255,255,0.08)',
+                        background: 'var(--dashboard-bg)',
+                        border: '1px solid var(--dashboard-border)',
+                        boxShadow: '0 20px 60px var(--dashboard-shadow)',
                         backdropFilter: 'blur(24px)',
                     }}
                 >
-                    <div className="flex items-center gap-2 px-5 py-3 border-b border-white/5">
+                    <div className="flex items-center gap-2 px-5 py-3 border-b border-[var(--border)]">
                         <div className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
                         <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
                         <div className="w-2.5 h-2.5 rounded-full bg-green-500/70" />
-                        <span className="ml-3 text-xs text-slate-500 font-mono">POST /smart-classify/file → 200 OK</span>
+                        <span className="ml-3 text-xs font-mono" style={{ color: 'var(--text-muted)' }}>POST /smart-classify/file → 200 OK</span>
                     </div>
-                    <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-sm">
-                        <div>
-                            <p className="text-slate-500 mb-2 text-xs uppercase tracking-widest font-sans">Response</p>
-                            <pre className="text-left leading-7" style={{ color: 'rgba(241,245,249,0.75)' }}>{`{
+                    <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch font-mono text-sm">
+                        {/* Illustration Panel */}
+                        <div className="relative h-64 lg:h-auto overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] flex items-center justify-center group/panel">
+                            <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/5 to-cyan-500/5 pointer-events-none z-10" />
+                            <img
+                                src="/ai_engine_illustration.png"
+                                alt="AI Engine Document Parsing pipeline"
+                                className="w-full h-full object-cover select-none transition-transform duration-700 group-hover/panel:scale-105"
+                            />
+                        </div>
+                        {/* Response Block */}
+                        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <p className="mb-2 text-xs uppercase tracking-widest font-sans" style={{ color: 'var(--text-muted)' }}>Response</p>
+                                <pre className="text-left leading-7" style={{ color: 'var(--text-secondary)' }}>{`{
   "document_type": "Invoice",
   "confidence": 0.94,
   "fields": {
@@ -181,21 +193,22 @@ export default function AIPipeline() {
     "due_date": "March 28, 2024"
   }
 }`}</pre>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <p className="text-slate-500 mb-1 text-xs uppercase tracking-widest font-sans">Extracted Fields</p>
-                            {[
-                                { k: 'document_type', v: 'Invoice', color: '#818CF8' },
-                                { k: 'confidence', v: '94%', color: '#34D399' },
-                                { k: 'vendor', v: 'Acme Corp Ltd.', color: '#F1F5F9' },
-                                { k: 'amount', v: '$5,400.00', color: '#34D399' },
-                                { k: 'date', v: 'March 14, 2024', color: '#F1F5F9' },
-                            ].map(row => (
-                                <div key={row.k} className="flex items-center justify-between py-1.5 border-b border-white/5">
-                                    <span className="text-slate-500 text-xs">{row.k}</span>
-                                    <span className="text-xs font-semibold" style={{ color: row.color }}>{row.v}</span>
-                                </div>
-                            ))}
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <p className="mb-1 text-xs uppercase tracking-widest font-sans" style={{ color: 'var(--text-muted)' }}>Extracted Fields</p>
+                                {[
+                                    { k: 'document_type', v: 'Invoice', color: 'var(--indigo)' },
+                                    { k: 'confidence', v: '94%', color: 'var(--emerald)' },
+                                    { k: 'vendor', v: 'Acme Corp Ltd.', color: 'var(--text-primary)' },
+                                    { k: 'amount', v: '$5,400.00', color: 'var(--emerald)' },
+                                    { k: 'date', v: 'March 14, 2024', color: 'var(--text-primary)' },
+                                ].map(row => (
+                                    <div key={row.k} className="flex items-center justify-between py-1.5 border-b border-[var(--border)]">
+                                        <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{row.k}</span>
+                                        <span className="text-xs font-semibold" style={{ color: row.color }}>{row.v}</span>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </motion.div>

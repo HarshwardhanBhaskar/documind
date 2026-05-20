@@ -37,12 +37,20 @@ def _extract_token(credentials: HTTPAuthorizationCredentials) -> str:
 def _supabase_error(e: Exception, fallback: str = "Authentication error") -> HTTPException:
     """Convert a Supabase exception into a clean FastAPI HTTPException."""
     msg = str(e)
-    if "Invalid login credentials" in msg:
+    lowered = msg.lower()
+    if "invalid login credentials" in lowered:
         return HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid email or password.")
-    if "User already registered" in msg:
+    if "user already registered" in lowered or "already registered" in lowered:
         return HTTPException(status.HTTP_409_CONFLICT, "Email already in use.")
-    if "expired" in msg.lower():
+    if "email not confirmed" in lowered or "confirm" in lowered:
+        return HTTPException(status.HTTP_401_UNAUTHORIZED, "Please confirm your email before logging in.")
+    if "signup" in lowered and ("disabled" in lowered or "not allowed" in lowered):
+        return HTTPException(status.HTTP_403_FORBIDDEN, "New account signups are disabled in Supabase.")
+    if "expired" in lowered:
         return HTTPException(status.HTTP_401_UNAUTHORIZED, "Token expired – please log in again.")
+    clean = msg.strip()
+    if clean and "key" not in lowered and "secret" not in lowered and "token" not in lowered:
+        return HTTPException(status.HTTP_400_BAD_REQUEST, f"{fallback} {clean}")
     return HTTPException(status.HTTP_400_BAD_REQUEST, fallback)
 
 
@@ -52,7 +60,7 @@ def _supabase_error(e: Exception, fallback: str = "Authentication error") -> HTT
     "/signup",
     response_model=TokenResponse,
     status_code=status.HTTP_201_CREATED,
-    summary="Create a new DocuMind account",
+    summary="Create a new NeuroDocs account",
 )
 async def signup(body: SignUpRequest):
     """

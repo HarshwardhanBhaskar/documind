@@ -1,5 +1,5 @@
 -- ============================================================
--- DocuMind - Supabase SQL Migration
+-- NeuroDocs - Supabase SQL Migration
 -- Run this in: Supabase Dashboard -> SQL Editor -> New Query
 -- ============================================================
 
@@ -20,6 +20,14 @@ create table if not exists public.documents (
     page_count        int
 );
 
+alter table public.documents
+    add column if not exists review_status text not null default 'new'
+        check (review_status in ('new','needs_review','approved','rejected')),
+    add column if not exists review_notes text,
+    add column if not exists reviewed_at timestamptz,
+    add column if not exists invoice_issue_flags jsonb not null default '[]'::jsonb,
+    add column if not exists duplicate_detected boolean not null default false;
+
 -- 2) Document indexes
 create index if not exists documents_user_id_idx
     on public.documents(user_id);
@@ -29,6 +37,9 @@ create index if not exists documents_upload_time_idx
 
 create index if not exists documents_status_idx
     on public.documents(processing_status);
+
+create index if not exists documents_review_status_idx
+    on public.documents(review_status);
 
 -- 3) Document RLS policies
 alter table public.documents enable row level security;
@@ -153,6 +164,9 @@ select
     processing_status,
     storage_url,
     classified_type,
+    review_status,
+    invoice_issue_flags,
+    duplicate_detected,
     file_size_bytes,
     page_count
 from public.documents;

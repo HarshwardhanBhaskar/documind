@@ -11,7 +11,7 @@ import Footer from '@/components/Footer';
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-black text-white w-full overflow-x-hidden relative">
+    <main className="min-h-screen bg-[var(--bg)] text-[var(--text-primary)] w-full overflow-x-hidden relative transition-colors duration-300">
       {/* Global ambient lighting — fixed so it persists while scrolling */}
       <div className="fixed inset-0 pointer-events-none z-0" aria-hidden="true">
         <div

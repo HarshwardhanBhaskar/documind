@@ -1,4 +1,4 @@
-# DocuMind Backend
+# NeuroDocs Backend
 
 - [x] Project scaffold (folders + files)
 - [ ] .env.example

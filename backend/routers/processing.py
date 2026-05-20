@@ -35,6 +35,12 @@ from database.models import (
 from database.supabase_client import service_supabase, supabase
 from services.classification_service import ClassificationService
 from services.extraction_service import ExtractionService
+from services.invoice_service import (
+    find_duplicate_invoice,
+    normalize_invoice_fields,
+    recommend_review_status,
+    validate_invoice_fields,
+)
 from services.ocr_service import OcrService
 from services.saas_service import consume_processing_credit, record_processing_outcome
 
@@ -211,6 +217,40 @@ def _safe_update_job(job_id: UUID, user_id: str, updates: dict[str, Any]) -> Non
         logger.warning("Failed to update job %s: %s", job_id, exc)
 
 
+def _build_invoice_document_updates(
+    *,
+    user_id: str,
+    document_id: UUID,
+    classified_type: str,
+    extracted_fields: dict[str, Any],
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    if classified_type != "Invoice":
+        return extracted_fields, {
+            "review_status": "new",
+            "review_notes": None,
+            "reviewed_at": None,
+            "invoice_issue_flags": [],
+            "duplicate_detected": False,
+        }
+
+    normalized_fields = normalize_invoice_fields(extracted_fields)
+    issue_flags = validate_invoice_fields(normalized_fields)
+    duplicate_detected = find_duplicate_invoice(
+        user_id=user_id,
+        document_id=document_id,
+        fields=normalized_fields,
+    )
+    review_status = recommend_review_status(issue_flags, duplicate_detected)
+
+    return normalized_fields, {
+        "review_status": review_status.value,
+        "review_notes": None,
+        "reviewed_at": None,
+        "invoice_issue_flags": issue_flags,
+        "duplicate_detected": duplicate_detected,
+    }
+
+
 def _ensure_document_ready_for_processing(doc_id: UUID, user_id: str) -> dict[str, Any]:
     doc = _fetch_document(doc_id, user_id)
     if doc.get("processing_status") == ProcessingStatus.PROCESSING.value:
@@ -259,6 +299,16 @@ async def _run_pipeline(
             text=ocr_result.raw_text,
             document_type=cls_result.classified_type,
         )
+        normalized_fields, invoice_updates = _build_invoice_document_updates(
+            user_id=user_id,
+            document_id=document_id,
+            classified_type=cls_result.classified_type,
+            extracted_fields=ext_result.extracted_fields,
+        )
+        ext_result = ExtractionResult(
+            document_id=ext_result.document_id,
+            extracted_fields=normalized_fields,
+        )
 
         _update_document(
             document_id,
@@ -267,8 +317,9 @@ async def _run_pipeline(
                 "processing_status": ProcessingStatus.COMPLETED.value,
                 "ocr_text": ocr_result.raw_text,
                 "classified_type": cls_result.classified_type,
-                "extracted_fields": ext_result.extracted_fields,
+                "extracted_fields": normalized_fields,
                 "page_count": ocr_result.page_count,
+                **invoice_updates,
             },
         )
 
@@ -523,5 +574,18 @@ async def extract_fields(
         text=text,
         document_type=document_type,
     )
-    _update_document(body.document_id, user_id, {"extracted_fields": result.extracted_fields})
-    return result
+    normalized_fields, invoice_updates = _build_invoice_document_updates(
+        user_id=user_id,
+        document_id=body.document_id,
+        classified_type=document_type,
+        extracted_fields=result.extracted_fields,
+    )
+    _update_document(
+        body.document_id,
+        user_id,
+        {
+            "extracted_fields": normalized_fields,
+            **invoice_updates,
+        },
+    )
+    return ExtractionResult(document_id=result.document_id, extracted_fields=normalized_fields)
