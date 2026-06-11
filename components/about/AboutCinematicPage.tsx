@@ -88,7 +88,7 @@ export default function AboutCinematicPage() {
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         
         {/* HERO SECTION */}
-        <section className="pt-36 pb-20 border-t border-[var(--border)]">
+        <section style={{ paddingTop: '12rem', paddingBottom: '5rem' }}>
           <motion.div
             initial="hidden"
             whileInView="show"
