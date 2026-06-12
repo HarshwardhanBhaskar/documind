@@ -58,12 +58,85 @@ const audience = [
   },
 ];
 
+function DocumentScannerMockup() {
+  return (
+    <div className="relative w-full max-w-lg aspect-[1.35/1] rounded-3xl border border-[var(--border)] bg-[var(--bg-card)] shadow-[0_20px_50px_var(--dashboard-shadow)] overflow-hidden flex p-4 gap-3 md:gap-4 backdrop-blur-md">
+      {/* Background radial highlight */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/5 to-cyan-500/5 pointer-events-none" />
+      
+      {/* Left side: Simulated Invoice File */}
+      <div className="flex-1 rounded-2xl border border-[var(--border)] bg-white/5 dark:bg-black/20 p-3.5 flex flex-col justify-between relative overflow-hidden">
+        {/* Animated Scanning Beam */}
+        <div className="absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-indigo-500 to-transparent shadow-[0_0_10px_rgba(99,102,241,0.8)] animate-scan-beam z-10" />
+        
+        <div>
+          <div className="flex justify-between items-center border-b border-[var(--border)] pb-2 mb-3">
+            <span className="text-[10px] font-extrabold tracking-wider text-indigo-500 dark:text-indigo-400">INVOICE</span>
+            <span className="text-[8px] text-[var(--text-muted)] font-mono">#INV-2026</span>
+          </div>
+          <div className="space-y-2">
+            <div className="h-2 w-16 bg-slate-400/20 dark:bg-slate-700/40 rounded animate-pulse" />
+            <div className="h-1.5 w-24 bg-slate-400/15 dark:bg-slate-700/25 rounded" />
+            <div className="h-1.5 w-12 bg-slate-400/15 dark:bg-slate-700/25 rounded" />
+          </div>
+        </div>
+        
+        <div className="border-t border-[var(--border)] pt-2">
+          <div className="flex justify-between text-[8px] font-semibold text-[var(--text-secondary)] mb-1">
+            <span>Item</span>
+            <span>Total</span>
+          </div>
+          <div className="flex justify-between text-[10px] font-bold text-[var(--text-primary)]">
+            <span>Enterprise API</span>
+            <span>$1,250.00</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Middle: Data Flow Channel */}
+      <div className="w-6 md:w-8 flex flex-col items-center justify-between h-full py-6 relative">
+        <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-ping" />
+        <div className="w-[1px] h-full bg-gradient-to-b from-indigo-500/20 via-indigo-500/40 to-cyan-500/20 relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-indigo-500 to-cyan-500 rounded animate-scan-beam" style={{ animationDuration: '3s' }} />
+        </div>
+        <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-ping delay-300" />
+      </div>
+
+      {/* Right side: Structured JSON Result */}
+      <div className="flex-1 rounded-2xl border border-indigo-500/20 bg-slate-950/90 dark:bg-black/60 p-3.5 font-mono text-[9px] sm:text-[10px] leading-relaxed text-slate-300 shadow-inner flex flex-col justify-between">
+        <div className="text-slate-500 text-[8px] mb-2">// Extraction Pipeline</div>
+        <div className="space-y-1.5 flex-1 select-none">
+          <div>
+            <span className="text-purple-400">"doc"</span>: <span className="text-emerald-400">"Invoice"</span>,
+          </div>
+          <div>
+            <span className="text-purple-400">"vendor"</span>: <span className="text-emerald-400">"Acme Corp"</span>,
+          </div>
+          <div>
+            <span className="text-purple-400">"total"</span>: <span className="text-indigo-400">1250.00</span>,
+          </div>
+          <div>
+            <span className="text-purple-400">"currency"</span>: <span className="text-emerald-400">"USD"</span>,
+          </div>
+          <div>
+            <span className="text-purple-400">"status"</span>: <span className="text-emerald-400">"valid"</span>
+          </div>
+        </div>
+        <div className="mt-3 pt-2 border-t border-slate-800/80 flex justify-between items-center">
+          <span className="text-[8px] text-slate-500 font-sans">Confidence</span>
+          <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[8px] font-bold">99.8%</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function AboutCinematicPage() {
   const cardClass =
     'relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] backdrop-blur p-6 transition-all duration-300 hover:border-indigo-500/50 hover:shadow-[0_15px_40px_var(--dashboard-shadow)] group';
 
   return (
-    <div className="relative overflow-hidden transition-colors duration-300">
+    <div className="relative overflow-hidden transition-colors duration-300 w-full">
       {/* Dynamic Theme Glow Overlays */}
       <div
         className="pointer-events-none absolute inset-0 opacity-40 dark:opacity-80"
@@ -88,21 +161,21 @@ export default function AboutCinematicPage() {
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         
         {/* HERO SECTION */}
-        <section style={{ paddingTop: '12rem', paddingBottom: '5rem' }}>
+        <section className="pt-32 pb-16 md:pt-40 md:pb-24 w-full">
           <motion.div
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, amount: 0.3 }}
             variants={fadeUp}
             transition={{ duration: 0.6, ease: 'easeOut' }}
-            className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center text-left"
+            className="flex flex-col lg:grid lg:grid-cols-12 gap-12 lg:gap-16 items-center text-left w-full"
           >
-            <div className="lg:col-span-7 flex flex-col justify-center text-left">
+            <div className="lg:col-span-7 flex flex-col justify-center text-left w-full">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--bg-card)] border border-[var(--border)] text-indigo-500 dark:text-indigo-300 w-fit mb-6">
-                <Sparkles className="h-3 w-3 animate-pulse" />
+                <Sparkles className="h-3 w-3 animate-pulse text-indigo-500" />
                 Next-Gen Document Intelligence
               </span>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-[var(--text-primary)] leading-[1.1] lg:leading-[1.05]">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-[var(--text-primary)] leading-[1.2] lg:leading-[1.15]">
                 Turn raw documents <br className="hidden sm:inline" />
                 into <span className="gradient-text">structured intelligence</span>.
               </h1>
@@ -118,19 +191,14 @@ export default function AboutCinematicPage() {
                   className="border border-[var(--border)] px-6 py-3 rounded-xl hover:border-indigo-500/30 transition inline-flex items-center gap-2 text-[var(--text-primary)] bg-[var(--bg-card)] font-semibold shadow-[0_4px_12px_var(--dashboard-shadow)]"
                 >
                   Read Docs
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4 text-[var(--text-secondary)]" />
                 </Link>
               </div>
             </div>
 
-            <div className="lg:col-span-5 flex justify-center items-center">
-              <div className="relative group w-full max-w-xs sm:max-w-sm aspect-square flex items-center justify-center rounded-3xl glass p-4 float-anim transition-all duration-500 hover:scale-[1.03] hover:shadow-[0_30px_70px_rgba(99,102,241,0.18)]">
-                <div className="absolute inset-0 bg-gradient-to-tr from-[var(--indigo)] to-[var(--violet)] opacity-10 blur-2xl rounded-3xl group-hover:opacity-20 transition-opacity duration-500" />
-                <img
-                  src="/about_illustration.png"
-                  alt="About Illustration"
-                  className="w-full h-full object-contain relative z-10 drop-shadow-[0_15px_30px_rgba(0,0,0,0.15)] group-hover:rotate-1 transition-transform duration-500"
-                />
+            <div className="lg:col-span-5 flex justify-center items-center w-full">
+              <div className="w-full max-w-md">
+                <DocumentScannerMockup />
               </div>
             </div>
           </motion.div>
@@ -144,69 +212,58 @@ export default function AboutCinematicPage() {
             viewport={{ once: true, amount: 0.25 }}
             variants={fadeUp}
             transition={{ duration: 0.5 }}
-            className="space-y-16"
+            className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16"
           >
-            <div className="text-center max-w-3xl mx-auto space-y-4">
-              <span className="text-xs uppercase tracking-[0.2em] font-semibold text-indigo-500 dark:text-indigo-400">The Problem & The Paradigm</span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-primary)]">Why Legacy Document Processing Fails</h2>
-              <p className="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed">
-                Traditional OCR and templates fail the moment layouts shift. NeuroDocs introduces dynamic schema parsing to keep pipelines robust.
+            <div className="lg:col-span-5 flex flex-col justify-center space-y-6 text-left">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/5 border border-indigo-500/15 text-indigo-500 dark:text-indigo-300 w-fit">
+                The Paradigm Shift
+              </span>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[var(--text-primary)] leading-[1.2]">
+                Why Legacy OCR <br className="hidden sm:inline" />Systems Fail
+              </h2>
+              <p className="text-base text-[var(--text-secondary)] leading-relaxed">
+                Traditional templates and rigid keyword searches break the moment a document layout shifts even slightly. NeuroDocs leverages LLM-based cognitive schemas to ensure robust, auto-healing data extraction.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* The Manual struggle */}
-              <div className="rounded-3xl p-8 bg-[var(--bg-card)] border border-red-500/10 dark:border-red-500/5 relative overflow-hidden group shadow-[0_15px_40px_var(--dashboard-shadow)]">
-                <div className="absolute top-0 right-0 p-6 opacity-5 text-red-500 group-hover:opacity-10 transition-opacity duration-300">
-                  <XCircle className="h-32 w-32" />
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center border border-red-500/25">
+            <div className="lg:col-span-7 flex flex-col gap-6">
+              <div className="p-8 rounded-3xl bg-[var(--bg-card)] border border-[var(--border)] shadow-md hover:border-red-500/20 transition-all duration-300 group">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center border border-red-500/20">
                     <Clock className="h-5 w-5 text-red-500" />
                   </div>
-                  <h3 className="text-xl font-bold text-[var(--text-primary)]">The Manual Bottleneck</h3>
+                  <h3 className="text-lg font-bold text-[var(--text-primary)]">The Fragile Legacy Way</h3>
                 </div>
-                <ul className="mt-8 space-y-5">
-                  <li className="flex items-start gap-3.5">
-                    <XCircle className="h-5 w-5 text-red-500/70 mt-0.5 shrink-0" />
-                    <p className="text-sm sm:text-base text-[var(--text-secondary)]">Manual copy-pasting from files is slow, scaling costs exponentially.</p>
-                  </li>
-                  <li className="flex items-start gap-3.5">
-                    <XCircle className="h-5 w-5 text-red-500/70 mt-0.5 shrink-0" />
-                    <p className="text-sm sm:text-base text-[var(--text-secondary)]">Rigid regex and zonal template systems break down on minor layout updates.</p>
-                  </li>
-                  <li className="flex items-start gap-3.5">
-                    <XCircle className="h-5 w-5 text-red-500/70 mt-0.5 shrink-0" />
-                    <p className="text-sm sm:text-base text-[var(--text-secondary)]">Data entries lack direct visual verification pipelines, yielding hidden errors.</p>
-                  </li>
-                </ul>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <XCircle className="h-4.5 w-4.5 text-red-500/70 mt-0.5 shrink-0" />
+                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed">Manual template setup takes hours of regex matching for each new vendor format.</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <XCircle className="h-4.5 w-4.5 text-red-500/70 mt-0.5 shrink-0" />
+                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed">Slight shifts in scan alignments or image quality cause regex extractions to fail completely.</p>
+                  </div>
+                </div>
               </div>
 
-              {/* The Intelligent Solution */}
-              <div className="rounded-3xl p-8 bg-[var(--bg-card)] border border-emerald-500/20 dark:border-emerald-500/10 relative overflow-hidden group shadow-[0_15px_40px_var(--dashboard-shadow)]">
-                <div className="absolute top-0 right-0 p-6 opacity-5 text-emerald-500 group-hover:opacity-10 transition-opacity duration-300">
-                  <CheckCircle2 className="h-32 w-32" />
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/25">
+              <div className="p-8 rounded-3xl bg-[var(--bg-card)] border border-indigo-500/10 dark:border-indigo-500/5 shadow-lg hover:border-emerald-500/25 transition-all duration-300 group relative overflow-hidden">
+                <div className="absolute -right-8 -top-8 w-24 h-24 bg-emerald-500/5 rounded-full blur-xl pointer-events-none" />
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
                     <Zap className="h-5 w-5 text-emerald-500" />
                   </div>
-                  <h3 className="text-xl font-bold text-[var(--text-primary)]">The Intelligent Solution</h3>
+                  <h3 className="text-lg font-bold text-[var(--text-primary)]">The NeuroDocs Intelligent Way</h3>
                 </div>
-                <ul className="mt-8 space-y-5">
-                  <li className="flex items-start gap-3.5">
-                    <CheckCircle2 className="h-5 w-5 text-emerald-500 mt-0.5 shrink-0" />
-                    <p className="text-sm sm:text-base text-[var(--text-secondary)]">AI automatically maps documents to custom data schemas in seconds.</p>
-                  </li>
-                  <li className="flex items-start gap-3.5">
-                    <CheckCircle2 className="h-5 w-5 text-emerald-500 mt-0.5 shrink-0" />
-                    <p className="text-sm sm:text-base text-[var(--text-secondary)]">Adaptive models understand semantic meaning, ignoring spatial layout shifts.</p>
-                  </li>
-                  <li className="flex items-start gap-3.5">
-                    <CheckCircle2 className="h-5 w-5 text-emerald-500 mt-0.5 shrink-0" />
-                    <p className="text-sm sm:text-base text-[var(--text-secondary)]">Direct page side-by-side verification tools keep database extraction audit-ready.</p>
-                  </li>
-                </ul>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="h-4.5 w-4.5 text-emerald-500 mt-0.5 shrink-0" />
+                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed">Zero templates. AI adapts automatically to any document format, table, or font variation.</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="h-4.5 w-4.5 text-emerald-500 mt-0.5 shrink-0" />
+                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed">Side-by-side human-in-the-loop validation tools ensure perfect accuracy before saving.</p>
+                  </div>
+                </div>
               </div>
             </div>
           </motion.div>
@@ -221,15 +278,18 @@ export default function AboutCinematicPage() {
             variants={fadeUp}
             transition={{ duration: 0.5 }}
           >
-            <div className="text-center max-w-3xl mx-auto space-y-4">
-              <span className="text-xs uppercase tracking-[0.2em] font-semibold text-indigo-500 dark:text-indigo-400">Step-by-step pipeline</span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-primary)]">How NeuroDocs Operates</h2>
-              <p className="text-sm sm:text-base text-[var(--text-secondary)]">
-                A seamless sequence connecting your raw file upload to a clean, actionable data endpoint.
+            <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
+              <span className="text-xs uppercase tracking-[0.2em] font-semibold text-indigo-500 dark:text-indigo-400">Processing Flow</span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-primary)] tracking-tight">How NeuroDocs Operates</h2>
+              <p className="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed max-w-xl mx-auto">
+                A streamlined multi-agent intelligence pipeline converting unstructured PDFs into clean, schema-perfect API endpoints.
               </p>
             </div>
 
-            <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 relative">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 relative">
+              {/* Connector line for large screens */}
+              <div className="hidden lg:block absolute top-1/2 left-4 right-4 h-[1px] bg-gradient-to-r from-indigo-500/10 via-cyan-500/20 to-indigo-500/10 -translate-y-8 z-0 pointer-events-none" />
+
               {pipeline.map((step, index) => {
                 const Icon = step.icon;
                 return (
@@ -239,16 +299,18 @@ export default function AboutCinematicPage() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.3 }}
                     transition={{ duration: 0.4, delay: index * 0.08 }}
-                    className={cardClass}
+                    className="relative overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--bg-card)] backdrop-blur p-6 transition-all duration-300 hover:border-indigo-500/40 hover:translate-y-[-4px] hover:shadow-[0_15px_35px_var(--dashboard-shadow)] group z-10"
                   >
-                    <div className="absolute top-4 right-4 text-xs font-bold text-slate-400/20 dark:text-slate-500/20">
-                      0{index + 1}
+                    <div className="flex justify-between items-start mb-6">
+                      <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-300/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <Icon className="h-6 w-6 text-indigo-500 dark:text-indigo-300" />
+                      </div>
+                      <span className="text-xs font-black text-indigo-500/50 dark:text-indigo-300/35 bg-indigo-500/5 px-2.5 py-0.5 rounded-lg border border-indigo-500/10">
+                        STEP 0{index + 1}
+                      </span>
                     </div>
-                    <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-300/10 flex items-center justify-center">
-                      <Icon className="h-6 w-6 text-indigo-500 dark:text-indigo-300" />
-                    </div>
-                    <h3 className="mt-6 text-lg font-bold text-[var(--text-primary)]">{step.label}</h3>
-                    <p className="mt-2.5 leading-relaxed text-sm text-[var(--text-secondary)]">{step.description}</p>
+                    <h3 className="text-lg font-bold text-[var(--text-primary)]">{step.label}</h3>
+                    <p className="mt-3 leading-relaxed text-sm text-[var(--text-secondary)]">{step.description}</p>
                   </motion.article>
                 );
               })}
@@ -267,8 +329,8 @@ export default function AboutCinematicPage() {
           >
             <div className="text-center max-w-3xl mx-auto space-y-4">
               <span className="text-xs uppercase tracking-[0.2em] font-semibold text-indigo-500 dark:text-indigo-400">Enterprise Frameworks</span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-primary)]">The Technology Stack</h2>
-              <p className="text-sm sm:text-base text-[var(--text-secondary)]">
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-primary)] tracking-tight">The Technology Stack</h2>
+              <p className="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed max-w-xl mx-auto">
                 Our technology choices prioritize processing speed, schema compliance, and secure data storage.
               </p>
             </div>
@@ -308,8 +370,8 @@ export default function AboutCinematicPage() {
           >
             <div className="text-center max-w-3xl mx-auto space-y-4">
               <span className="text-xs uppercase tracking-[0.2em] font-semibold text-indigo-500 dark:text-indigo-400">Tailored Core Workflows</span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-primary)]">Who Uses NeuroDocs</h2>
-              <p className="text-sm sm:text-base text-[var(--text-secondary)]">
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-primary)] tracking-tight">Who Uses NeuroDocs</h2>
+              <p className="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed max-w-xl mx-auto">
                 Our features are engineered to solve high-volume paper problems across vital enterprise business departments.
               </p>
             </div>
