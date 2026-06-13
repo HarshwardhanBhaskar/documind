@@ -4,15 +4,15 @@
 <p><strong>AI-Powered Document Intelligence SaaS</strong></p>
 
 <p>
-  <img src="https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js" alt="Next.js" />
+  <img src="https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js" alt="Next.js" />
   <img src="https://img.shields.io/badge/FastAPI-0.100+-009688?style=for-the-badge&logo=fastapi" alt="FastAPI" />
   <img src="https://img.shields.io/badge/Supabase-BaaS-3ECF8E?style=for-the-badge&logo=supabase" alt="Supabase" />
   <img src="https://img.shields.io/badge/Gemini_2.0_Flash-AI-4285F4?style=for-the-badge&logo=google" alt="Google Gemini" />
 </p>
 
-<p>Transform unstructured PDFs, scanned documents, and images into structured data using Google Gemini AI — automatically.</p>
+<p>Transform unstructured PDFs, scanned documents, and images into structured data using Google Gemini AI. Redesigned with a premium light-theme SaaS interface using the <strong>Alabaster + Frosted Glass</strong> design system and <strong>"The Infinite Node"</strong> brand identity.</p>
 
-<a href="https://documind-1g2.pages.dev/"><strong>View Live Demo</strong></a> · <a href="https://neurodocs-api.onrender.com/docs"><strong>API Documentation</strong></a>
+<a href="https://822d3cad.documind-1g2.pages.dev/"><strong>View Live Demo</strong></a> · <a href="https://neurodocs-api.onrender.com/docs"><strong>API Documentation</strong></a>
 </div>
 
 ---
@@ -146,8 +146,8 @@ When a user uploads a document, NeuroDocs executes a multi-layered pipeline:
 ## 🛠️ Tech Stack
 
 **Frontend**
-- Next.js 14 (App Router)
-- React, TypeScript, TailwindCSS
+- Next.js 16 (App Router)
+- React 19, TypeScript, TailwindCSS
 - Framer Motion & Three.js (3D animations)
 - Supabase Auth Client
 
