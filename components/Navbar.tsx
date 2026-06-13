@@ -63,7 +63,7 @@ export default function Navbar() {
       <header className={`fixed inset-x-0 top-0 z-50 border-b transition ${scrolled ? 'border-[var(--border)] bg-[var(--nav-bg-scrolled)] shadow-sm' : 'border-transparent bg-[var(--nav-bg)]'}`}>
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
           <Link href="/" className="flex items-center gap-3" aria-label="NeuroDocs">
-            <span className="flex h-9 w-9 items-center justify-center rounded-md bg-slate-950 text-sm font-semibold text-white">ND</span>
+            <img src="/logo.png" alt="NeuroDocs Logo" className="h-9 w-9 rounded-md object-cover" />
             <span className="text-base font-semibold text-[var(--text-primary)]">NeuroDocs</span>
           </Link>
 

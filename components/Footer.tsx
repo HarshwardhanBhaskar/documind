@@ -43,7 +43,7 @@ export default function Footer() {
         <div className="grid gap-10 md:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div>
             <Link href="/" className="flex items-center gap-3" aria-label="NeuroDocs">
-              <span className="flex h-9 w-9 items-center justify-center rounded-md bg-slate-950 text-sm font-semibold text-white">ND</span>
+              <img src="/logo.png" alt="NeuroDocs Logo" className="h-9 w-9 rounded-md object-cover" />
               <span className="text-base font-semibold text-[var(--text-primary)]">NeuroDocs</span>
             </Link>
             <p className="mt-4 max-w-sm text-sm leading-6 text-[var(--text-secondary)]">
