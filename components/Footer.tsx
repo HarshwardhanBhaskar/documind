@@ -33,7 +33,7 @@ const columns = [
 const socials = [
   { icon: Github, href: '#', label: 'GitHub' },
   { icon: Twitter, href: '#', label: 'Twitter' },
-  { icon: Linkedin, href: '#', label: 'LinkedIn' },
+  { icon: Linkedin, href: 'https://www.linkedin.com/in/harshwardhan-bhaskar-991949294/', label: 'LinkedIn' },
 ];
 
 export default function Footer() {
@@ -53,7 +53,7 @@ export default function Footer() {
               {socials.map((social) => {
                 const Icon = social.icon;
                 return (
-                  <a key={social.label} href={social.href} aria-label={social.label} className="flex h-9 w-9 items-center justify-center rounded-md border border-[var(--border)] text-[var(--text-secondary)] transition hover:border-slate-400 hover:text-[var(--text-primary)]">
+                  <a key={social.label} href={social.href} target={social.href === '#' ? undefined : '_blank'} rel={social.href === '#' ? undefined : 'noopener noreferrer'} aria-label={social.label} className="flex h-9 w-9 items-center justify-center rounded-md border border-[var(--border)] text-[var(--text-secondary)] transition hover:border-slate-400 hover:text-[var(--text-primary)]">
                     <Icon className="h-4 w-4" />
                   </a>
                 );
