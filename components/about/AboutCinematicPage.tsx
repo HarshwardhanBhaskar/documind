@@ -65,14 +65,14 @@ function DocumentScannerMockup() {
       <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/5 to-cyan-500/5 pointer-events-none" />
       
       {/* Left side: Simulated Invoice File */}
-      <div className="flex-1 rounded-2xl border border-[var(--border)] bg-white/5 dark:bg-black/20 p-3.5 flex flex-col justify-between relative overflow-hidden">
+      <div className="flex-1 min-w-0 rounded-2xl border border-[var(--border)] bg-white/5 dark:bg-black/20 p-3.5 flex flex-col justify-between relative overflow-hidden">
         {/* Animated Scanning Beam */}
         <div className="absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-indigo-500 to-transparent shadow-[0_0_10px_rgba(99,102,241,0.8)] animate-scan-beam z-10" />
         
         <div>
           <div className="flex justify-between items-center border-b border-[var(--border)] pb-2 mb-3">
-            <span className="text-[10px] font-extrabold tracking-wider text-indigo-500 dark:text-indigo-400">INVOICE</span>
-            <span className="text-[8px] text-[var(--text-muted)] font-mono">#INV-2026</span>
+            <span className="text-[10px] font-extrabold tracking-wider text-indigo-500 dark:text-indigo-400 truncate">INVOICE</span>
+            <span className="text-[8px] text-[var(--text-muted)] font-mono truncate">#INV-2026</span>
           </div>
           <div className="space-y-2">
             <div className="h-2 w-16 bg-slate-400/20 dark:bg-slate-700/40 rounded animate-pulse" />
@@ -82,19 +82,19 @@ function DocumentScannerMockup() {
         </div>
         
         <div className="border-t border-[var(--border)] pt-2">
-          <div className="flex justify-between text-[8px] font-semibold text-[var(--text-secondary)] mb-1">
+          <div className="flex justify-between text-[8px] font-semibold text-[var(--text-secondary)] mb-1 truncate">
             <span>Item</span>
             <span>Total</span>
           </div>
-          <div className="flex justify-between text-[10px] font-bold text-[var(--text-primary)]">
+          <div className="flex justify-between text-[10px] font-bold text-[var(--text-primary)] truncate">
             <span>Enterprise API</span>
-            <span>$1,250.00</span>
+            <span>$1.2k</span>
           </div>
         </div>
       </div>
 
       {/* Middle: Data Flow Channel */}
-      <div className="w-6 md:w-8 flex flex-col items-center justify-between h-full py-6 relative">
+      <div className="w-6 md:w-8 flex flex-col items-center justify-between h-full py-6 relative shrink-0">
         <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-ping" />
         <div className="w-[1px] h-full bg-gradient-to-b from-indigo-500/20 via-indigo-500/40 to-cyan-500/20 relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-indigo-500 to-cyan-500 rounded animate-scan-beam" style={{ animationDuration: '3s' }} />
@@ -103,28 +103,28 @@ function DocumentScannerMockup() {
       </div>
 
       {/* Right side: Structured JSON Result */}
-      <div className="flex-1 rounded-2xl border border-indigo-500/20 bg-slate-950/90 dark:bg-black/60 p-3.5 font-mono text-[9px] sm:text-[10px] leading-relaxed text-slate-300 shadow-inner flex flex-col justify-between">
-        <div className="text-slate-500 text-[8px] mb-2">// Extraction Pipeline</div>
-        <div className="space-y-1.5 flex-1 select-none">
-          <div>
-            <span className="text-purple-400">"doc"</span>: <span className="text-emerald-400">"Invoice"</span>,
+      <div className="flex-1 min-w-0 rounded-2xl border border-[var(--border)] bg-slate-950 p-3.5 font-mono text-[9px] sm:text-[10px] leading-relaxed text-slate-300 shadow-inner flex flex-col justify-between">
+        <div className="text-slate-500 text-[8px] mb-2 truncate">{'// Output'}</div>
+        <div className="space-y-1.5 flex-1 select-none overflow-x-hidden">
+          <div className="truncate">
+            <span className="text-purple-400">&quot;doc&quot;</span>: <span className="text-emerald-400">&quot;Invoice&quot;</span>,
           </div>
-          <div>
-            <span className="text-purple-400">"vendor"</span>: <span className="text-emerald-400">"Acme Corp"</span>,
+          <div className="truncate">
+            <span className="text-purple-400">&quot;vendor&quot;</span>: <span className="text-emerald-400">&quot;Acme&quot;</span>,
           </div>
-          <div>
-            <span className="text-purple-400">"total"</span>: <span className="text-indigo-400">1250.00</span>,
+          <div className="truncate">
+            <span className="text-purple-400">&quot;total&quot;</span>: <span className="text-indigo-400">1250.00</span>,
           </div>
-          <div>
-            <span className="text-purple-400">"currency"</span>: <span className="text-emerald-400">"USD"</span>,
+          <div className="truncate">
+            <span className="text-purple-400">&quot;currency&quot;</span>: <span className="text-emerald-400">&quot;USD&quot;</span>,
           </div>
-          <div>
-            <span className="text-purple-400">"status"</span>: <span className="text-emerald-400">"valid"</span>
+          <div className="truncate text-[8px]">
+            <span className="text-purple-400">&quot;status&quot;</span>: <span className="text-emerald-400">&quot;valid&quot;</span>
           </div>
         </div>
-        <div className="mt-3 pt-2 border-t border-slate-800/80 flex justify-between items-center">
+        <div className="mt-3 pt-2 border-t border-slate-800/80 flex justify-between items-center truncate">
           <span className="text-[8px] text-slate-500 font-sans">Confidence</span>
-          <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[8px] font-bold">99.8%</span>
+          <span className="px-1 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[8px] font-bold">99%</span>
         </div>
       </div>
     </div>
@@ -168,9 +168,9 @@ export default function AboutCinematicPage() {
             viewport={{ once: true, amount: 0.3 }}
             variants={fadeUp}
             transition={{ duration: 0.6, ease: 'easeOut' }}
-            className="flex flex-col lg:grid lg:grid-cols-12 gap-12 lg:gap-16 items-center text-left w-full"
+            className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center text-left w-full"
           >
-            <div className="lg:col-span-7 flex flex-col justify-center text-left w-full">
+            <div className="flex flex-col justify-center text-left w-full">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--bg-card)] border border-[var(--border)] text-indigo-500 dark:text-indigo-300 w-fit mb-6">
                 <Sparkles className="h-3 w-3 animate-pulse text-indigo-500" />
                 Next-Gen Document Intelligence
@@ -196,7 +196,7 @@ export default function AboutCinematicPage() {
               </div>
             </div>
 
-            <div className="lg:col-span-5 flex justify-center items-center w-full">
+            <div className="flex justify-center items-center w-full">
               <div className="w-full max-w-md">
                 <DocumentScannerMockup />
               </div>

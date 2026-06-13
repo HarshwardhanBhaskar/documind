@@ -66,7 +66,7 @@ export default function AuthModal({ open, onClose, onSuccess }: AuthModalProps) 
                         key="backdrop"
                         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                         className="fixed inset-0 z-40"
-                        style={{ background: 'rgba(0,0,0,0.72)', backdropFilter: 'blur(6px)' }}
+                        style={{ background: 'rgba(0,0,0,0.40)', backdropFilter: 'blur(6px)' }}
                         onClick={close}
                         aria-hidden="true"
                     />
@@ -83,26 +83,26 @@ export default function AuthModal({ open, onClose, onSuccess }: AuthModalProps) 
                         <div
                             className="w-full max-w-md rounded-2xl pointer-events-auto"
                             style={{
-                                background: 'rgba(15,15,20,0.95)',
-                                border: '1px solid rgba(255,255,255,0.10)',
+                                background: 'var(--surface)',
+                                border: '1px solid var(--border)',
                                 backdropFilter: 'blur(32px)',
-                                boxShadow: '0 40px 100px rgba(0,0,0,0.8), 0 0 0 1px rgba(99,102,241,0.15)',
+                                boxShadow: '0 40px 100px var(--dashboard-shadow)',
                             }}
                         >
                             {/* Header */}
-                            <div className="flex items-center justify-between px-6 py-5 border-b border-white/8">
+                            <div className="flex items-center justify-between px-6 py-5 border-b border-[var(--border)]">
                                 <div>
-                                    <h2 className="text-white font-bold text-lg leading-tight">
+                                    <h2 className="font-bold text-lg leading-tight" style={{ color: 'var(--text-primary)' }}>
                                         {mode === 'login' ? 'Welcome back' : 'Create account'}
                                     </h2>
-                                    <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                                    <p className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>
                                         {mode === 'login' ? 'Sign in to NeuroDocs' : 'Start for free – no card required'}
                                     </p>
                                 </div>
                                 <button
                                     onClick={close}
-                                    className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors"
-                                    style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.45)' }}
+                                    className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors cursor-pointer"
+                                    style={{ background: 'var(--surface-muted)', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}
                                     aria-label="Close">
                                     <X className="w-4 h-4" />
                                 </button>
@@ -138,8 +138,8 @@ export default function AuthModal({ open, onClose, onSuccess }: AuthModalProps) 
                                     <button
                                         type="button"
                                         onClick={() => setShowPwd(v => !v)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 opacity-40 hover:opacity-70 transition-opacity"
-                                        style={{ color: 'white' }}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
+                                        style={{ color: 'var(--text-secondary)' }}
                                         aria-label={showPwd ? 'Hide password' : 'Show password'}>
                                         {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                     </button>
@@ -163,23 +163,29 @@ export default function AuthModal({ open, onClose, onSuccess }: AuthModalProps) 
                                     disabled={loading}
                                     whileHover={!loading ? { scale: 1.02, y: -1 } : {}}
                                     whileTap={!loading ? { scale: 0.98 } : {}}
-                                    className="flex items-center justify-center gap-2 rounded-xl text-sm font-bold text-white h-11 disabled:opacity-60"
+                                    className="flex items-center justify-center gap-2 rounded-xl text-sm font-bold text-white h-11 disabled:opacity-60 cursor-pointer"
                                     style={{
-                                        background: 'linear-gradient(135deg,#6366F1,#A78BFA)',
-                                        boxShadow: '0 0 24px rgba(99,102,241,0.40)',
+                                        background: 'var(--accent)',
+                                        boxShadow: '0 4px 12px rgba(37, 99, 235, 0.15)',
+                                    }}
+                                    onMouseEnter={e => {
+                                        e.currentTarget.style.background = 'var(--accent-strong)';
+                                    }}
+                                    onMouseLeave={e => {
+                                        e.currentTarget.style.background = 'var(--accent)';
                                     }}>
                                     {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                                     {mode === 'login' ? 'Sign in' : 'Create account'}
                                 </motion.button>
 
                                 {/* Mode toggle */}
-                                <p className="text-center text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                                <p className="text-center text-xs" style={{ color: 'var(--text-secondary)' }}>
                                     {mode === 'login' ? "Don't have an account?" : 'Already have an account?'}{' '}
                                     <button
                                         type="button"
                                         onClick={() => { setMode(m => m === 'login' ? 'signup' : 'login'); setError(null); }}
-                                        className="font-semibold hover:opacity-80 transition-opacity"
-                                        style={{ color: '#818CF8' }}>
+                                        className="font-semibold hover:opacity-85 transition-opacity cursor-pointer"
+                                        style={{ color: 'var(--accent)' }}>
                                         {mode === 'login' ? 'Sign up' : 'Sign in'}
                                     </button>
                                 </p>
@@ -195,28 +201,39 @@ export default function AuthModal({ open, onClose, onSuccess }: AuthModalProps) 
 // ── Shared field component ─────────────────────────────────────────────────────
 function Field({
     icon, value, onChange, ...props
-}: {
+    }: {
     icon: React.ReactNode;
     value: string;
     onChange: (v: string) => void;
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'>) {
+    } & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'>) {
     return (
-        <div className="relative">
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 opacity-35" style={{ color: 'white' }}>
+        <div className="relative w-full">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 opacity-60 flex items-center justify-center pointer-events-none" style={{ color: 'var(--text-secondary)' }}>
                 {icon}
             </div>
             <input
                 {...props}
                 value={value}
                 onChange={e => onChange(e.target.value)}
-                className="w-full h-11 pl-9 pr-4 rounded-xl text-sm text-white outline-none transition-all"
+                className="w-full pl-9 pr-4 rounded-xl text-sm outline-none transition-all block"
                 style={{
-                    background: 'rgba(255,255,255,0.04)',
-                    border: '1px solid rgba(255,255,255,0.09)',
-                    caretColor: '#818CF8',
+                    height: '2.75rem',
+                    paddingTop: 0,
+                    paddingBottom: 0,
+                    lineHeight: '2.75rem',
+                    background: 'var(--surface-muted)',
+                    border: '1px solid var(--border)',
+                    color: 'var(--text-primary)',
+                    caretColor: 'var(--accent)',
                 }}
-                onFocus={e => (e.currentTarget.style.borderColor = 'rgba(99,102,241,0.55)')}
-                onBlur={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.09)')}
+                onFocus={e => {
+                    e.currentTarget.style.borderColor = 'var(--accent)';
+                    e.currentTarget.style.boxShadow = '0 0 0 2px rgba(37, 99, 235, 0.1)';
+                }}
+                onBlur={e => {
+                    e.currentTarget.style.borderColor = 'var(--border)';
+                    e.currentTarget.style.boxShadow = 'none';
+                }}
             />
         </div>
     );

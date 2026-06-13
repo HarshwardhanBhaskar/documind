@@ -1,121 +1,91 @@
 'use client';
 
 import Link from 'next/link';
-import { FileText, Github, Linkedin, Twitter } from 'lucide-react';
+import { Github, Linkedin, Twitter } from 'lucide-react';
 
-const nav = {
-    Product: [
-        { label: 'Features', href: '/#features' },
-        { label: 'AI Tools', href: '/#tools' },
-        { label: 'Pricing', href: '/pricing' },
+const columns = [
+  {
+    title: 'Product',
+    links: [
+      { label: 'Capabilities', href: '/#features' },
+      { label: 'Workflow', href: '/#demo' },
+      { label: 'Pricing', href: '/pricing' },
     ],
-    Company: [
-        { label: 'About', href: '/about' },
-        { label: 'Privacy Policy', href: '/privacy' },
-        { label: 'Terms of Service', href: '/terms' },
+  },
+  {
+    title: 'Company',
+    links: [
+      { label: 'About', href: '/about' },
+      { label: 'Roadmap', href: '/roadmap' },
+      { label: 'Security', href: '/security' },
     ],
-} as const;
+  },
+  {
+    title: 'Docs',
+    links: [
+      { label: 'Getting started', href: '/docs/getting-started' },
+      { label: 'API reference', href: '/docs/api-reference' },
+      { label: 'Integrations', href: '/docs/integrations' },
+    ],
+  },
+];
 
-const social = [
-    { Icon: Github, label: 'GitHub', href: 'https://github.com/' },
-    { Icon: Twitter, label: 'Twitter', href: 'https://x.com/' },
-    { Icon: Linkedin, label: 'LinkedIn', href: 'https://www.linkedin.com/' },
-] as const;
+const socials = [
+  { icon: Github, href: '#', label: 'GitHub' },
+  { icon: Twitter, href: '#', label: 'Twitter' },
+  { icon: Linkedin, href: '#', label: 'LinkedIn' },
+];
 
 export default function Footer() {
-    const year = new Date().getFullYear();
-
-    return (
-        <footer className="relative pt-20 pb-10" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
-            <div
-                className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-px pointer-events-none"
-                style={{ background: 'linear-gradient(90deg,transparent,rgba(99,102,241,0.5),rgba(167,139,250,0.4),transparent)' }}
-                aria-hidden="true"
-            />
-
-            <div className="max-w-7xl mx-auto px-6">
-                <div className="grid grid-cols-2 md:grid-cols-6 gap-10 mb-16">
-                    <div className="col-span-2 flex flex-col gap-5">
-                        <Link href="/" className="flex items-center gap-2.5 w-fit" aria-label="NeuroDocs">
-                            <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#6366F1,#A78BFA)' }}>
-                                <FileText className="w-[18px] h-[18px] text-white" />
-                            </div>
-                            <span className="font-black text-[1.1rem] text-white tracking-tight">
-                                Neuro<span className="gradient-text">Docs</span>
-                            </span>
-                        </Link>
-
-                        <p className="text-sm leading-[1.85] max-w-[260px]" style={{ color: 'rgba(241,245,249,0.32)' }}>
-                            AI-powered document processing for fast-moving teams and enterprises worldwide.
-                        </p>
-
-                        <div className="flex gap-2.5">
-                            {social.map(({ Icon, label, href }) => (
-                                <a
-                                    key={label}
-                                    href={href}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label={label}
-                                    className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 hover:-translate-y-0.5"
-                                    style={{
-                                        background: 'rgba(255,255,255,0.04)',
-                                        border: '1px solid rgba(255,255,255,0.08)',
-                                        color: 'rgba(241,245,249,0.35)',
-                                    }}>
-                                    <Icon className="w-4 h-4" />
-                                </a>
-                            ))}
-                        </div>
-
-                        <a
-                            href="https://github.com/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-fit flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 hover:-translate-y-0.5"
-                            style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)', color: 'rgba(241,245,249,0.45)' }}>
-                            <Github className="w-3.5 h-3.5" />
-                            View on GitHub
-                            <span className="ml-1 px-1.5 py-0.5 rounded text-[10px] font-bold" style={{ background: 'rgba(99,102,241,0.18)', color: '#818CF8' }}>
-                                OSS
-                            </span>
-                        </a>
-                    </div>
-
-                    {Object.entries(nav).map(([section, items]) => (
-                        <div key={section} className="flex flex-col gap-4">
-                            <h3 className="text-white text-xs font-bold uppercase tracking-widest">{section}</h3>
-                            {items.map(item => (
-                                <Link
-                                    key={item.label}
-                                    href={item.href}
-                                    className="text-sm transition-colors duration-200"
-                                    style={{ color: 'rgba(241,245,249,0.32)' }}>
-                                    {item.label}
-                                </Link>
-                            ))}
-                        </div>
-                    ))}
-                </div>
-
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
-                    <p className="text-xs" style={{ color: 'rgba(241,245,249,0.18)' }}>
-                        © {year} NeuroDocs, Inc. All rights reserved.
-                    </p>
-                    <div className="flex gap-6">
-                        <Link href="/terms" className="text-xs transition-colors duration-200" style={{ color: 'rgba(241,245,249,0.18)' }}>
-                            Terms
-                        </Link>
-                        <Link href="/privacy" className="text-xs transition-colors duration-200" style={{ color: 'rgba(241,245,249,0.18)' }}>
-                            Privacy
-                        </Link>
-                        <Link href="/cookies" className="text-xs transition-colors duration-200" style={{ color: 'rgba(241,245,249,0.18)' }}>
-                            Cookies
-                        </Link>
-                    </div>
-                </div>
+  return (
+    <footer className="border-t border-[var(--border)] bg-[var(--surface)]">
+      <div className="mx-auto max-w-7xl px-6 py-12">
+        <div className="grid gap-10 md:grid-cols-[1.4fr_repeat(3,1fr)]">
+          <div>
+            <Link href="/" className="flex items-center gap-3" aria-label="NeuroDocs">
+              <span className="flex h-9 w-9 items-center justify-center rounded-md bg-slate-950 text-sm font-semibold text-white">ND</span>
+              <span className="text-base font-semibold text-[var(--text-primary)]">NeuroDocs</span>
+            </Link>
+            <p className="mt-4 max-w-sm text-sm leading-6 text-[var(--text-secondary)]">
+              A practical document intelligence workspace for teams that need extraction, review, and export controls.
+            </p>
+            <div className="mt-5 flex gap-2">
+              {socials.map((social) => {
+                const Icon = social.icon;
+                return (
+                  <a key={social.label} href={social.href} aria-label={social.label} className="flex h-9 w-9 items-center justify-center rounded-md border border-[var(--border)] text-[var(--text-secondary)] transition hover:border-slate-400 hover:text-[var(--text-primary)]">
+                    <Icon className="h-4 w-4" />
+                  </a>
+                );
+              })}
             </div>
-        </footer>
-    );
-}
+          </div>
 
+          {columns.map((column) => (
+            <div key={column.title}>
+              <h3 className="text-xs font-semibold uppercase text-[var(--text-muted)]">{column.title}</h3>
+              <ul className="mt-4 space-y-3">
+                {column.links.map((link) => (
+                  <li key={link.label}>
+                    <Link href={link.href} className="text-sm text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-10 flex flex-col gap-3 border-t border-[var(--border)] pt-6 text-xs text-[var(--text-muted)] md:flex-row md:items-center md:justify-between">
+          <p>© {new Date().getFullYear()} NeuroDocs. All rights reserved.</p>
+          <div className="flex gap-5">
+            <Link href="/terms">Terms</Link>
+            <Link href="/privacy">Privacy</Link>
+            <Link href="/cookies">Cookies</Link>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}

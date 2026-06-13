@@ -19,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="light">
       <body className="antialiased" style={{ width: '100%', minHeight: '100vh', overflowX: 'hidden' }}>
         <AuthProvider>
           {children}

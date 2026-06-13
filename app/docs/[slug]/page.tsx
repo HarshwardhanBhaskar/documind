@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, ArrowRight, BookText, Code2 } from 'lucide-react';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
 type DocSection = {
   title: string;
@@ -236,6 +238,40 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
+function DocsIllustrationMockup() {
+  return (
+    <div className="relative w-full h-full min-h-[160px] aspect-square rounded-2xl border border-[var(--border)] bg-slate-950 p-4 flex flex-col justify-between font-mono text-[9px] leading-relaxed text-slate-300 shadow-inner overflow-hidden select-none">
+      {/* Background glow */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/10 to-cyan-500/10 pointer-events-none" />
+      
+      {/* Top window controls */}
+      <div className="flex items-center gap-1.5 border-b border-white/5 pb-2 mb-2">
+        <div className="w-2 h-2 rounded-full bg-red-500/60" />
+        <div className="w-2 h-2 rounded-full bg-yellow-500/60" />
+        <div className="w-2 h-2 rounded-full bg-green-500/60" />
+        <span className="ml-2 text-[8px] text-slate-500">api-client.ts</span>
+      </div>
+      
+      {/* Code body snippet */}
+      <div className="flex-1 space-y-1 overflow-hidden">
+        <div><span className="text-indigo-400">import</span> &#123; <span className="text-cyan-400">neuro</span> &#125; <span className="text-indigo-400">from</span> <span className="text-emerald-400">&quot;docs&quot;</span>;</div>
+        <div className="text-slate-500 text-[8px]">{'// Initialize API client'}</div>
+        <div><span className="text-indigo-400">const</span> client = <span className="text-indigo-400">new</span> <span className="text-cyan-400">NeuroDocs</span>(&#123;</div>
+        <div className="pl-3 truncate"><span className="text-purple-400">apiKey</span>: <span className="text-emerald-400">&quot;nd_live_...&quot;</span>,</div>
+        <div className="pl-3 truncate"><span className="text-purple-400">version</span>: <span className="text-emerald-400">&quot;2026-06&quot;</span></div>
+        <div>&#125;);</div>
+        <div className="pt-1"><span className="text-indigo-400">await</span> client.<span className="text-cyan-400">extract</span>(&quot;doc_123&quot;);</div>
+      </div>
+      
+      {/* Bottom status line */}
+      <div className="mt-2 pt-2 border-t border-white/5 flex items-center justify-between text-[7px] text-slate-500">
+        <span>STATUS: READY</span>
+        <span className="text-indigo-400">200 OK</span>
+      </div>
+    </div>
+  );
+}
+
 export default async function DocsPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug: currentSlug } = await params;
   const data = docs[currentSlug];
@@ -247,180 +283,213 @@ export default async function DocsPage({ params }: { params: Promise<{ slug: str
   const nextSlug = currentIndex < docOrder.length - 1 ? docOrder[currentIndex + 1] : null;
 
   return (
-    <main className="relative overflow-hidden bg-[var(--bg)] text-[var(--text-primary)] transition-colors duration-300" style={{ minHeight: '100vh' }}>
-      <div
-        className="pointer-events-none absolute -top-14 left-1/2 -translate-x-1/2 h-80 w-[45rem] blur-3xl opacity-60 dark:opacity-100"
-        style={{ background: 'linear-gradient(120deg, rgba(34,211,238,0.22), rgba(99,102,241,0.24), rgba(167,139,250,0.18))' }}
-        aria-hidden="true"
-      />
+    <main className="min-h-screen bg-[var(--bg)] text-[var(--text-primary)] w-full overflow-x-hidden relative transition-colors duration-300">
+      {/* Global ambient lighting */}
+      <div className="fixed inset-0 pointer-events-none z-0" aria-hidden="true">
+        <div
+          className="absolute top-20 left-1/4 w-[600px] h-[600px] rounded-full"
+          style={{
+            background: 'radial-gradient(circle, rgba(99,102,241,0.07) 0%, transparent 65%)',
+            filter: 'blur(40px)',
+          }}
+        />
+        <div
+          className="absolute bottom-40 right-1/4 w-[500px] h-[500px] rounded-full"
+          style={{
+            background: 'radial-gradient(circle, rgba(34,211,238,0.05) 0%, transparent 65%)',
+            filter: 'blur(40px)',
+          }}
+        />
+      </div>
 
-      <div className="cx py-12 md:py-16">
-        <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold hover:text-[var(--text-primary)] transition-colors duration-200" style={{ color: 'var(--text-secondary)' }}>
-          <ArrowLeft className="h-4 w-4" />
-          Back to Home
-        </Link>
+      <div className="relative z-10 w-full flex flex-col min-h-screen">
+        <Navbar />
 
-        <div className="mt-7 grid gap-6 lg:grid-cols-[16rem_1fr]">
-          <aside className="h-fit lg:sticky lg:top-8 space-y-4">
-            <div className="rounded-2xl p-4 bg-[var(--bg-card)] border border-[var(--border)]">
-              <p className="text-xs uppercase tracking-[0.2em] font-semibold" style={{ color: 'var(--text-secondary)' }}>
-                Docs Menu
-              </p>
-              <div className="mt-3 space-y-2">
-                {docOrder.map((slug) => {
-                  const item = docs[slug];
-                  const active = slug === currentSlug;
-                  return (
-                    <Link
-                      key={slug}
-                      href={`/docs/${slug}`}
-                      className="block rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:text-[var(--text-primary)] hover:bg-[var(--border)] border"
-                      style={{
-                        color: active ? 'var(--text-primary)' : 'var(--text-secondary)',
-                        background: active ? 'rgba(99,102,241,0.12)' : 'var(--bg-card)',
-                        borderColor: active ? 'var(--border-glow)' : 'var(--border)',
-                      }}
-                    >
-                      {item.title}
-                    </Link>
-                  );
-                })}
+        <div className="flex-1 pt-32 pb-20 px-6 max-w-7xl mx-auto w-full">
+          <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold hover:text-[var(--text-primary)] transition-colors duration-200" style={{ color: 'var(--text-secondary)' }}>
+            <ArrowLeft className="h-4 w-4" />
+            Back to Home
+          </Link>
+
+          <div className="mt-7 grid gap-8 lg:grid-cols-[17rem_1fr] items-start">
+            <aside className="lg:sticky lg:top-28 space-y-4">
+              <div className="rounded-2xl p-4 bg-[var(--bg-card)] border border-[var(--border)] shadow-xs">
+                <p className="text-xs uppercase tracking-[0.2em] font-semibold" style={{ color: 'var(--text-secondary)' }}>
+                  Docs Menu
+                </p>
+                <div className="mt-3 space-y-2">
+                  {docOrder.map((slug) => {
+                    const item = docs[slug];
+                    const active = slug === currentSlug;
+                    return (
+                      <Link
+                        key={slug}
+                        href={`/docs/${slug}`}
+                        className="block rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:text-[var(--text-primary)] hover:bg-[var(--border)] border"
+                        style={{
+                          color: active ? 'var(--text-primary)' : 'var(--text-secondary)',
+                          background: active ? 'rgba(99,102,241,0.08)' : 'transparent',
+                          borderColor: active ? 'var(--border-glow)' : 'transparent',
+                        }}
+                      >
+                        {item.title}
+                      </Link>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
 
-            <div className="rounded-2xl p-4 bg-[var(--bg-card)] border border-[var(--border)]">
-              <p className="text-xs uppercase tracking-[0.2em] font-semibold" style={{ color: 'var(--text-secondary)' }}>
-                Quick Links
-              </p>
-              <div className="mt-3 space-y-2">
-                {data.quickLinks.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="block rounded-lg px-3 py-2 text-sm transition-colors hover:text-[var(--text-primary)] hover:bg-[var(--border)] border border-[var(--border)]"
-                    style={{ color: 'var(--text-secondary)', background: 'var(--bg-card)' }}
+              <div className="rounded-2xl p-4 bg-[var(--bg-card)] border border-[var(--border)] shadow-xs">
+                <p className="text-xs uppercase tracking-[0.2em] font-semibold" style={{ color: 'var(--text-secondary)' }}>
+                  Quick Links
+                </p>
+                <div className="mt-3 space-y-2">
+                  {data.quickLinks.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="block rounded-lg px-3 py-2 text-sm transition-colors hover:text-[var(--text-primary)] hover:bg-[var(--border)] border border-[var(--border)]"
+                      style={{ color: 'var(--text-secondary)', background: 'var(--bg-card)' }}
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </aside>
+
+            <section className="space-y-6">
+              <div
+                className="rounded-3xl p-7 md:p-9 bg-[var(--bg-card)] border border-[var(--border)]"
+                style={{
+                  boxShadow: '0 25px 60px var(--dashboard-shadow)',
+                  backdropFilter: 'blur(20px)',
+                }}
+              >
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                  <div className="lg:col-span-8 flex flex-col justify-center">
+                    <span className="text-xs uppercase tracking-[0.2em] font-bold" style={{ color: 'var(--indigo)' }}>
+                      Documentation
+                    </span>
+                    <h1 className="mt-3 text-3xl md:text-5xl font-black tracking-tight text-[var(--text-primary)]">{data.title}</h1>
+                    <p className="mt-3 text-sm md:text-base leading-7 font-medium" style={{ color: 'var(--text-secondary)' }}>
+                      {data.strapline}
+                    </p>
+                    <p className="mt-4 text-sm md:text-base leading-7" style={{ color: 'var(--text-muted)' }}>
+                      {data.description}
+                    </p>
+                    <div className="mt-6 flex flex-wrap items-center gap-4 text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>
+                      <span className="inline-flex items-center gap-1.5">
+                        <BookText className="h-3.5 w-3.5" style={{ color: 'var(--indigo)' }} />
+                        Last updated: {data.updated}
+                      </span>
+                      <span className="inline-flex items-center gap-1.5">
+                        <Code2 className="h-3.5 w-3.5" style={{ color: 'var(--cyan)' }} />
+                        {data.sections.length} key sections
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="lg:col-span-4 flex justify-center items-center">
+                    <div className="relative group w-full max-w-[200px] aspect-square flex items-center justify-center rounded-2xl glass p-3 float-anim transition-all duration-500 hover:scale-[1.03] hover:shadow-[0_20px_50px_rgba(99,102,241,0.08)]">
+                      <div className="absolute inset-0 bg-gradient-to-tr from-[var(--indigo)] to-[var(--violet)] opacity-10 blur-xl rounded-2xl group-hover:opacity-20 transition-opacity duration-500" />
+                      <div className="relative z-10 w-full h-full">
+                        <DocsIllustrationMockup />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid gap-5">
+                {data.sections.map((section, index) => (
+                  <article
+                    key={section.title}
+                    className="rounded-2xl p-6 bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text-primary)] transition-all duration-300 hover:border-indigo-500/20 shadow-xs"
                   >
-                    {item.label}
-                  </Link>
+                    <p className="text-xs uppercase tracking-[0.2em] font-semibold" style={{ color: 'var(--text-secondary)' }}>
+                      Section {index + 1}
+                    </p>
+                    <h2 className="mt-2 text-xl font-bold">{section.title}</h2>
+                    <ul className="mt-4 space-y-2.5">
+                      {section.points.map((point) => (
+                        <li
+                          key={point}
+                          className="rounded-lg px-3.5 py-2.5 text-sm leading-6 border border-[var(--border)] transition-colors hover:border-indigo-500/10"
+                          style={{ color: 'var(--text-secondary)', background: 'var(--bg-card)' }}
+                        >
+                          {point}
+                        </li>
+                      ))}
+                    </ul>
+                  </article>
                 ))}
               </div>
-            </div>
-          </aside>
 
-          <section className="space-y-5">
-            <div
-              className="rounded-3xl p-7 md:p-9 bg-[var(--bg-card)] border border-[var(--border)]"
-              style={{
-                boxShadow: '0 25px 60px var(--dashboard-shadow)',
-              }}
-            >
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                <div className="lg:col-span-8 flex flex-col justify-center">
-                  <p className="text-xs uppercase tracking-[0.2em]" style={{ color: 'var(--text-secondary)' }}>
-                    Documentation
-                  </p>
-                  <h1 className="mt-3 text-3xl md:text-5xl font-black tracking-tight text-[var(--text-primary)]">{data.title}</h1>
-                  <p className="mt-3 text-sm md:text-base leading-7 font-medium" style={{ color: 'var(--text-secondary)' }}>
-                    {data.strapline}
-                  </p>
-                  <p className="mt-4 text-sm md:text-base leading-7" style={{ color: 'var(--text-muted)' }}>
-                    {data.description}
-                  </p>
-                  <div className="mt-6 flex flex-wrap items-center gap-4 text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>
-                    <span className="inline-flex items-center gap-1.5">
-                      <BookText className="h-3.5 w-3.5 text-indigo-400" />
-                      Last updated: {data.updated}
-                    </span>
-                    <span className="inline-flex items-center gap-1.5">
-                      <Code2 className="h-3.5 w-3.5 text-cyan-400" />
-                      {data.sections.length} key sections
-                    </span>
+              {data.sample ? (
+                <div
+                  className="rounded-2xl border border-[var(--border)] shadow-xl overflow-hidden"
+                  style={{
+                    background: 'var(--bg-card)',
+                    boxShadow: '0 20px 60px var(--dashboard-shadow)',
+                    backdropFilter: 'blur(24px)',
+                  }}
+                >
+                  <div className="flex items-center gap-2 px-5 py-3 border-b border-[var(--border)]">
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-green-500/70" />
+                    <span className="ml-3 text-[10px] font-mono" style={{ color: 'var(--text-secondary)' }}>{data.sample.title}</span>
                   </div>
+                  <pre
+                    className="overflow-x-auto p-5 text-sm leading-6 font-mono"
+                    style={{
+                      background: 'rgba(0,0,0,0.02)',
+                      color: 'var(--text-primary)',
+                    }}
+                  >
+                    <code>{data.sample.code}</code>
+                  </pre>
                 </div>
+              ) : null}
 
-                <div className="lg:col-span-4 flex justify-center items-center">
-                  <div className="relative group w-full max-w-[200px] aspect-square flex items-center justify-center rounded-2xl glass p-3 float-anim transition-all duration-500 hover:scale-[1.03] hover:shadow-[0_20px_50px_rgba(99,102,241,0.12)]">
-                    <div className="absolute inset-0 bg-gradient-to-tr from-[var(--indigo)] to-[var(--violet)] opacity-10 blur-xl rounded-2xl group-hover:opacity-20 transition-opacity duration-500" />
-                    <img
-                      src="/docs_illustration.png"
-                      alt="Docs Illustration"
-                      className="w-full h-full object-contain relative z-10 drop-shadow-[0_10px_20px_rgba(0,0,0,0.12)] group-hover:rotate-2 transition-transform duration-500"
-                    />
-                  </div>
-                </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {prevSlug ? (
+                  <Link
+                    href={`/docs/${prevSlug}`}
+                    className="rounded-2xl p-4 bg-[var(--bg-card)] border border-[var(--border)] hover:border-indigo-500/20 transition-all text-[var(--text-primary)] shadow-xs"
+                  >
+                    <p className="text-xs uppercase tracking-[0.2em]" style={{ color: 'var(--text-secondary)' }}>
+                      Previous
+                    </p>
+                    <p className="mt-2 text-sm font-semibold">{docs[prevSlug].title}</p>
+                  </Link>
+                ) : (
+                  <div className="rounded-2xl p-4 bg-[var(--bg-card)] border border-[var(--border)] opacity-30 shadow-xs" />
+                )}
+
+                {nextSlug ? (
+                  <Link
+                    href={`/docs/${nextSlug}`}
+                    className="rounded-2xl p-4 text-right bg-[var(--bg-card)] border border-[var(--border)] hover:border-indigo-500/20 transition-all text-[var(--text-primary)] shadow-xs"
+                  >
+                    <p className="text-xs uppercase tracking-[0.2em]" style={{ color: 'var(--text-secondary)' }}>
+                      Next
+                    </p>
+                    <p className="mt-2 text-sm font-semibold inline-flex items-center gap-1.5 justify-end">
+                      {docs[nextSlug].title}
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </p>
+                  </Link>
+                ) : (
+                  <div className="rounded-2xl p-4 bg-[var(--bg-card)] border border-[var(--border)] opacity-30 shadow-xs" />
+                )}
               </div>
-            </div>
-
-            <div className="grid gap-4">
-              {data.sections.map((section, index) => (
-                <article
-                  key={section.title}
-                  className="rounded-2xl p-6 bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text-primary)] transition-all duration-300 hover:border-indigo-500/20"
-                >
-                  <p className="text-xs uppercase tracking-[0.2em] font-semibold" style={{ color: 'var(--text-secondary)' }}>
-                    Section {index + 1}
-                  </p>
-                  <h2 className="mt-2 text-xl font-bold">{section.title}</h2>
-                  <ul className="mt-4 space-y-2.5">
-                    {section.points.map((point) => (
-                      <li
-                        key={point}
-                        className="rounded-lg px-3.5 py-2.5 text-sm leading-6 border border-[var(--border)] transition-colors hover:border-indigo-500/10"
-                        style={{ color: 'var(--text-secondary)', background: 'var(--bg-card)' }}
-                      >
-                        {point}
-                      </li>
-                    ))}
-                  </ul>
-                </article>
-              ))}
-            </div>
-
-            {data.sample ? (
-              <div className="rounded-2xl p-6 bg-[#0F172A] border border-[var(--border)] shadow-xl overflow-hidden">
-                <p className="text-xs uppercase tracking-[0.2em] font-semibold text-[#818CF8]">
-                  {data.sample.title}
-                </p>
-                <pre className="mt-4 overflow-x-auto rounded-lg p-4 text-sm leading-6 bg-[#020617] text-[#C7D2FE] border border-white/5 font-mono">
-                  <code>{data.sample.code}</code>
-                </pre>
-              </div>
-            ) : null}
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              {prevSlug ? (
-                <Link
-                  href={`/docs/${prevSlug}`}
-                  className="rounded-2xl p-4 bg-[var(--bg-card)] border border-[var(--border)] hover:border-indigo-500/20 transition-all text-[var(--text-primary)]"
-                >
-                  <p className="text-xs uppercase tracking-[0.2em]" style={{ color: 'var(--text-secondary)' }}>
-                    Previous
-                  </p>
-                  <p className="mt-2 text-sm font-semibold">{docs[prevSlug].title}</p>
-                </Link>
-              ) : (
-                <div className="rounded-2xl p-4 bg-[var(--bg-card)] border border-[var(--border)] opacity-30" />
-              )}
-
-              {nextSlug ? (
-                <Link
-                  href={`/docs/${nextSlug}`}
-                  className="rounded-2xl p-4 text-right bg-[var(--bg-card)] border border-[var(--border)] hover:border-indigo-500/20 transition-all text-[var(--text-primary)]"
-                >
-                  <p className="text-xs uppercase tracking-[0.2em]" style={{ color: 'var(--text-secondary)' }}>
-                    Next
-                  </p>
-                  <p className="mt-2 text-sm font-semibold inline-flex items-center gap-1.5">
-                    {docs[nextSlug].title}
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </p>
-                </Link>
-              ) : (
-                <div className="rounded-2xl p-4 bg-[var(--bg-card)] border border-[var(--border)] opacity-30" />
-              )}
-            </div>
-          </section>
+            </section>
+          </div>
         </div>
+
+        <Footer />
       </div>
     </main>
   );

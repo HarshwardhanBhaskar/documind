@@ -1,389 +1,161 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-    Upload, ArrowRight, Sparkles, Shield, Zap, FileText,
-    CheckCircle, Cpu, ChevronRight, Activity
-} from 'lucide-react';
+import { ArrowRight, CheckCircle2, Clock3, FileText, ShieldCheck, Sparkles, TriangleAlert } from 'lucide-react';
 
-const STATS = [
-    { label: 'Documents Processed', value: '10M+' },
-    { label: 'Accuracy', value: '99.8%' },
-    { label: 'Time Saved', value: '80%' },
+const rows = [
+  { id: 'INV-2407', type: 'Invoice', owner: 'AP inbox', value: '$8,420.00', status: 'Approved', tone: 'green' },
+  { id: 'MSA-1182', type: 'Contract', owner: 'Legal', value: '42 pages', status: 'Review', tone: 'amber' },
+  { id: 'CLM-9034', type: 'Claim', owner: 'Ops queue', value: '18 fields', status: 'Ready', tone: 'blue' },
+  { id: 'PO-6620', type: 'Purchase order', owner: 'Finance', value: '$2,180.50', status: 'Matched', tone: 'green' },
 ];
 
-const TRUST = [
-    { icon: Shield, label: 'SOC 2 Certified' },
-    { icon: Zap, label: 'Real-time AI' },
-    { icon: Sparkles, label: 'GPT-4 Powered' },
+const metrics = [
+  { label: 'field accuracy', value: '99.2%' },
+  { label: 'avg processing', value: '41s' },
+  { label: 'manual checks saved', value: '68%' },
 ];
 
-/* ─── Particles ─── */
-type Dot = { w: string; h: string; left: string; top: string; bg: string; op: number; anim: string; delay: string };
+function StatusPill({ status, tone }: { status: string; tone: string }) {
+  const classes = {
+    green: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
+    amber: 'bg-amber-50 text-amber-700 ring-amber-200',
+    blue: 'bg-blue-50 text-blue-700 ring-blue-200',
+  }[tone] ?? 'bg-slate-100 text-slate-700 ring-slate-200';
 
-function seeded01(seed: number): number {
-    // Deterministic pseudo-random value in [0, 1) to keep SSR/CSR output identical.
-    let x = seed | 0;
-    x ^= x << 13;
-    x ^= x >> 17;
-    x ^= x << 5;
-    return (x >>> 0) / 4294967296;
+  return <span className={`rounded-full px-2.5 py-1 text-xs font-medium ring-1 ${classes}`}>{status}</span>;
 }
 
-function createDots(count = 24): Dot[] {
-    const pal = ['#6366F1', '#A78BFA', '#22D3EE'];
-    return Array.from({ length: count }, (_, i) => ({
-        w: `${(seeded01((i + 1) * 101) * 2.2 + 0.8).toFixed(1)}px`,
-        h: `${(seeded01((i + 1) * 103) * 2.2 + 0.8).toFixed(1)}px`,
-        left: `${(seeded01((i + 1) * 107) * 100).toFixed(1)}%`,
-        top: `${(seeded01((i + 1) * 109) * 100).toFixed(1)}%`,
-        bg: pal[i % 3],
-        op: +(seeded01((i + 1) * 113) * 0.4 + 0.15).toFixed(2),
-        anim: `particle-drift ${(seeded01((i + 1) * 127) * 16 + 10).toFixed(1)}s ease-in-out infinite`,
-        delay: `${(seeded01((i + 1) * 131) * 9).toFixed(1)}s`,
-    }));
-}
-
-function Particles() {
-    const dots = useMemo(() => createDots(), []);
-
-    return (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-            {dots.map((d, i) => (
-                <div key={i} className="absolute rounded-full"
-                    style={{
-                        width: d.w, height: d.h, left: d.left, top: d.top,
-                        background: d.bg, opacity: d.op, animation: d.anim, animationDelay: d.delay
-                    }} />
-            ))}
-        </div>
-    );
-}
-
-/* ─── Pipeline Preview ─── */
-const STEPS = [
-    { icon: Upload, label: 'Document Received', sub: 'PDF · 2.4 MB', color: '#6366F1' },
-    { icon: Cpu, label: 'AI Analyzing', sub: 'Parsing structure…', color: '#A78BFA' },
-    { icon: FileText, label: 'Data Extracted', sub: '12 fields identified', color: '#22D3EE' },
-    { icon: CheckCircle, label: 'Ready to Export', sub: 'All formats available', color: '#34D399' },
-];
-const FIELDS = [
-    { k: 'Document Type', v: 'Invoice', hi: false },
-    { k: 'Vendor', v: 'Acme Corp Ltd.', hi: false },
-    { k: 'Amount', v: '$24,500.00', hi: true },
-    { k: 'Date', v: 'Mar 7, 2026', hi: false },
-    { k: 'Confidence', v: '99.4%', hi: true },
-];
-
-function ProductPreview() {
-    const [step, setStep] = useState(0);
-    const [progress, setProgress] = useState(0);
-    const [show, setShow] = useState(false);
-    const iv = useRef<ReturnType<typeof setInterval> | null>(null);
-
-    useEffect(() => {
-        iv.current = setInterval(() => {
-            setStep(prev => {
-                const next = (prev + 1) % STEPS.length;
-                if (next === 0) { setShow(false); setProgress(0); }
-                if (next === STEPS.length - 1) setShow(true);
-                return next;
-            });
-        }, 1500);
-        return () => { if (iv.current) clearInterval(iv.current); };
-    }, []);
-
-    useEffect(() => {
-        const id = setInterval(() => setProgress(p => Math.min(p + 1.4, 100)), 60);
-        return () => clearInterval(id);
-    }, [step]);
-
-    return (
-        /* FIX: outer "device frame" container gives visual depth and clear boundary */
-        <div className="relative w-full max-w-[390px] mx-auto">
-            {/* Ambient glow */}
-            <div className="absolute -inset-8 rounded-3xl pointer-events-none" aria-hidden="true"
-                style={{ background: 'radial-gradient(ellipse at 50% 40%, rgba(99,102,241,0.15) 0%, rgba(167,139,250,0.08) 45%, transparent 70%)' }} />
-
-            {/* Parent "frame" wrapping all three sub-panels */}
-            <div className="relative flex flex-col gap-3 p-4 rounded-3xl"
-                style={{
-                    background: 'var(--dashboard-bg)',
-                    border: '1px solid var(--dashboard-border)',
-                    boxShadow: '0 40px 100px var(--dashboard-shadow), 0 0 0 1px var(--border), inset 0 1px 0 var(--border)',
-                }}>
-
-                {/* Title bar dots */}
-                <div className="flex items-center gap-1.5 px-1 mb-1" aria-hidden="true">
-                    <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'rgba(239,68,68,0.7)' }} />
-                    <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'rgba(234,179,8,0.7)' }} />
-                    <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'rgba(34,197,94,0.7)' }} />
-                    <div className="flex-1 mx-4 h-5 rounded-md flex items-center justify-center text-[10px] font-mono"
-                        style={{ background: 'var(--border)', color: 'var(--text-muted)' }}>
-                        app.neurodocs.ai
-                    </div>
-                </div>
-
-                {/* File card */}
-                <div className="relative rounded-xl p-3.5 overflow-hidden"
-                    style={{
-                        background: 'var(--bg-card)', border: '1px solid var(--border-glow)',
-                        boxShadow: '0 0 0 1px var(--border), 0 8px 24px var(--dashboard-shadow)'
-                    }}>
-                    {/* Scan line */}
-                    <div className="absolute inset-0 overflow-hidden rounded-xl pointer-events-none" aria-hidden="true">
-                        <div className="w-full h-0.5"
-                            style={{
-                                background: 'linear-gradient(90deg,transparent,rgba(99,102,241,0.7),transparent)',
-                                animation: 'scan 3s ease-in-out infinite'
-                            }} />
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-                            style={{ background: 'linear-gradient(135deg,#6366F1,#A78BFA)', boxShadow: '0 4px 12px rgba(99,102,241,0.4)' }}>
-                            <FileText className="w-4 h-4 text-white" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="text-[13px] font-semibold truncate" style={{ color: 'var(--text-primary)' }}>Q4_Invoice_2024.pdf</p>
-                            <p className="text-[11px] mt-0.5" style={{ color: 'var(--text-muted)' }}>2.4 MB · PDF Document</p>
-                        </div>
-                        <div className="flex items-center gap-1.5 shrink-0">
-                            <span className="w-1.5 h-1.5 rounded-full glow-breathe" style={{ background: 'var(--emerald)' }} />
-                            <span className="text-[10px] font-medium" style={{ color: 'var(--emerald)' }}>Live</span>
-                        </div>
-                    </div>
-                    <div className="mt-3 h-1 rounded-full overflow-hidden" style={{ background: 'var(--border)' }}>
-                        <div className="h-full rounded-full transition-all duration-100"
-                            style={{
-                                width: `${progress}%`, background: 'linear-gradient(90deg,#6366F1,#22D3EE)',
-                                boxShadow: '0 0 8px rgba(99,102,241,0.6)'
-                            }} />
-                    </div>
-                    <div className="mt-1.5 flex justify-between">
-                        <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>{STEPS[step].sub}</span>
-                        <span className="text-[10px] font-bold" style={{ color: 'var(--indigo)' }}>{Math.round(progress)}%</span>
-                    </div>
-                </div>
-
-                {/* Pipeline grid */}
-                <div className="grid grid-cols-2 gap-2">
-                    {STEPS.map((s, idx) => {
-                        const Icon = s.icon;
-                        const done = idx < step;
-                        const cur = idx === step;
-                        return (
-                            <div key={s.label}
-                                className="relative flex items-center gap-2 px-2.5 py-2.5 rounded-xl transition-all duration-300"
-                                style={{
-                                    background: cur ? `${s.color}12` : done ? 'rgba(52,211,153,0.06)' : 'var(--bg-card)',
-                                    border: cur ? `1px solid ${s.color}45` : done ? '1px solid rgba(52,211,153,0.18)' : '1px solid var(--border)',
-                                }}>
-                                {cur && (
-                                    <motion.div className="absolute inset-0 rounded-xl pointer-events-none"
-                                        style={{ border: `1px solid ${s.color}55` }}
-                                        animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.4, repeat: Infinity }}
-                                        aria-hidden="true" />
-                                )}
-                                <div className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0"
-                                    style={{ background: `${s.color}18` }}>
-                                    {done
-                                        ? <CheckCircle style={{ width: '0.875rem', height: '0.875rem', color: 'var(--emerald)' }} />
-                                        : <Icon className="w-3.5 h-3.5" style={{ color: cur ? s.color : 'var(--text-muted)' }} />}
-                                </div>
-                                <p className="text-[11px] font-semibold leading-tight truncate"
-                                    style={{ color: cur || done ? 'var(--text-primary)' : 'var(--text-muted)' }}>
-                                    {s.label}
-                                </p>
-                                {cur && (
-                                    <motion.div className="shrink-0 w-1.5 h-1.5 rounded-full ml-auto"
-                                        style={{ background: s.color }}
-                                        animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 0.9, repeat: Infinity }} />
-                                )}
-                            </div>
-                        );
-                    })}
-                </div>
-
-                {/* Extracted data */}
-                <div className="rounded-xl p-3.5"
-                    style={{ background: 'rgba(167,139,250,0.06)', border: '1px solid rgba(167,139,250,0.14)' }}>
-                    <div className="flex items-center gap-2 mb-3">
-                        <div className="w-4 h-4 rounded flex items-center justify-center"
-                            style={{ background: 'rgba(167,139,250,0.15)' }}>
-                            <Sparkles className="w-2.5 h-2.5" style={{ color: 'var(--violet)' }} />
-                        </div>
-                        <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--violet)' }}>
-                            AI Extracted Fields
-                        </span>
-                        <div className="ml-auto flex items-center gap-1">
-                            <Activity className="w-2.5 h-2.5" style={{ color: 'var(--emerald)' }} />
-                            <span className="text-[10px]" style={{ color: 'var(--emerald)' }}>Live</span>
-                        </div>
-                    </div>
-                    <div className="space-y-1.5">
-                        {FIELDS.map((f, idx) => (
-                            <motion.div key={f.k}
-                                initial={{ opacity: 0, x: 8 }}
-                                animate={{ opacity: show ? 1 : 0.15, x: show ? 0 : 8 }}
-                                transition={{ delay: idx * 0.07, duration: 0.25 }}
-                                className="flex items-center justify-between py-1" style={{ borderBottom: '1px solid var(--border)' }}>
-                                <span className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{f.k}</span>
-                                <span className="text-[11px] font-semibold" style={{ color: f.hi ? 'var(--indigo)' : 'var(--text-primary)' }}>{f.v}</span>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-/* ─── Hero ─── */
 export default function Hero() {
-    return (
-        <section
-            id="hero"
-            className="relative flex flex-col justify-center overflow-hidden grid-bg border-t border-[var(--border)] py-40"
-            style={{ minHeight: '760px' }}
+  return (
+    <section className="relative overflow-hidden border-b border-[var(--border)] bg-[var(--bg)] pt-28">
+      <div className="absolute inset-x-0 top-0 h-40 bg-[linear-gradient(180deg,rgba(37,99,235,0.08),transparent)]" aria-hidden="true" />
+
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-6 pb-16 pt-12 lg:grid-cols-[0.88fr_1.12fr] lg:items-center lg:pb-24 lg:pt-20">
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="max-w-2xl"
         >
+          <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text-secondary)] shadow-xs">
+            <Sparkles className="h-3.5 w-3.5 text-blue-600" />
+            Document AI for operations teams
+          </div>
 
-            {/* Blobs */}
-            <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-                <div className="absolute -top-32 -left-16 w-[700px] h-[700px] rounded-full"
-                    style={{ background: 'radial-gradient(circle,rgba(99,102,241,0.08) 0%,transparent 65%)' }} />
-                <div className="absolute top-1/2 -right-24 w-[500px] h-[500px] rounded-full"
-                    style={{ background: 'radial-gradient(circle,rgba(167,139,250,0.06) 0%,transparent 70%)' }} />
-                <div className="absolute -bottom-32 left-0 w-[400px] h-[400px] rounded-full"
-                    style={{ background: 'radial-gradient(circle,rgba(34,211,238,0.04) 0%,transparent 70%)' }} />
-            </div>
-            <Particles />
+          <h1 className="mt-6 max-w-3xl text-4xl font-semibold leading-[1.05] tracking-normal text-[var(--text-primary)] sm:text-5xl lg:text-6xl">
+            Turn document work into a monitored production workflow.
+          </h1>
 
-            <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <p className="mt-6 max-w-xl text-base leading-7 text-[var(--text-secondary)] sm:text-lg">
+            NeuroDocs extracts, validates, and routes business documents with the controls teams expect: review queues, audit trails, confidence scores, and export-ready data.
+          </p>
 
-                <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <a href="#demo" className="inline-flex h-11 items-center gap-2 rounded-md bg-[var(--accent)] px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-[var(--accent-strong)]">
+              Try the workflow
+              <ArrowRight className="h-4 w-4" />
+            </a>
+            <a href="#features" className="inline-flex h-11 items-center rounded-md border border-[var(--border-strong)] bg-[var(--surface)] px-5 text-sm font-semibold text-[var(--text-primary)] transition hover:border-slate-400">
+              View capabilities
+            </a>
+          </div>
 
-                    {/* ── Copy ── */}
-                    <div className="flex flex-col gap-7">
+          <div className="mt-8 grid max-w-xl grid-cols-3 divide-x divide-[var(--border)] rounded-md border border-[var(--border)] bg-[var(--surface)]">
+            {metrics.map((metric) => (
+              <div key={metric.label} className="px-4 py-3">
+                <div className="text-lg font-semibold text-[var(--text-primary)]">{metric.value}</div>
+                <div className="mt-0.5 text-xs leading-4 text-[var(--text-muted)]">{metric.label}</div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
 
-                        {/* Badge */}
-                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-                            <div className="w-fit flex items-center gap-2.5 px-4 py-2 rounded-full"
-                                style={{ background: 'var(--bg-card)', border: '1px solid var(--border-glow)', backdropFilter: 'blur(16px)' }}>
-                                <span className="relative flex h-2 w-2">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
-                                        style={{ background: 'var(--indigo)' }}></span>
-                                    <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: 'var(--indigo)' }}></span>
-                                </span>
-                                <span className="text-xs font-semibold tracking-wider uppercase"
-                                    style={{ color: 'var(--text-secondary)' }}>AI-Powered · Public Beta</span>
-                            </div>
-                        </motion.div>
-
-                        {/* Headline */}
-                        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.65, delay: 0.1 }}
-                            className="font-black"
-                            style={{ color: 'var(--text-primary)', fontSize: 'clamp(2.5rem,5vw,4.5rem)', lineHeight: 1.05, letterSpacing: '-0.03em' }}>
-                            Intelligent<br />
-                            <span style={{
-                                background: 'linear-gradient(90deg,#818CF8 0%,#C7D2FE 35%,#818CF8 55%,#A78BFA 100%)',
-                                backgroundSize: '200% auto',
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent',
-                                backgroundClip: 'text',
-                                animation: 'shimmer-move 3s linear infinite',
-                            }}>Document AI</span><br />
-                            <span style={{ color: 'var(--text-primary)' }}>for modern teams</span>
-                        </motion.h1>
-
-                        {/* Sub */}
-                        <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6, delay: 0.2 }}
-                            className="text-base lg:text-lg leading-[1.8] max-w-[460px]"
-                            style={{ color: 'var(--text-secondary)' }}>
-                            Automate document workflows with cutting-edge AI — merge, split, compress,
-                            extract, and classify at enterprise scale. From upload to insight in seconds.
-                        </motion.p>
-
-                        {/* Trust badges */}
-                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6, delay: 0.28 }} className="flex flex-wrap gap-2">
-                            {TRUST.map(({ icon: Icon, label }) => (
-                                <div key={label} className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium border border-[var(--border)] bg-[var(--bg-card)]"
-                                    style={{ color: 'var(--text-secondary)' }}>
-                                    <Icon className="w-3.5 h-3.5" style={{ color: 'var(--indigo)' }} />
-                                    {label}
-                                </div>
-                            ))}
-                        </motion.div>
-
-                        {/* CTAs */}
-                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6, delay: 0.36 }} className="flex flex-wrap items-center gap-4">
-                            <motion.a
-                                href="#demo" id="hero-upload-btn"
-                                whileHover={{ y: -4, scale: 1.04, boxShadow: '0 0 48px rgba(99,102,241,0.70), 0 12px 48px rgba(99,102,241,0.38)' }}
-                                whileTap={{ scale: 0.97 }}
-                                transition={{ type: 'spring', stiffness: 360, damping: 22 }}
-                                className="group relative inline-flex items-center gap-2.5 rounded-2xl text-sm font-bold text-white overflow-hidden"
-                                style={{
-                                    padding: '0.875rem 1.875rem',
-                                    background: 'linear-gradient(135deg,#6366F1 0%,#818CF8 50%,#A78BFA 100%)',
-                                    boxShadow: '0 0 28px rgba(99,102,241,0.50),0 8px 32px rgba(99,102,241,0.28)'
-                                }}>
-                                <span className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                                    style={{ background: 'linear-gradient(135deg,#818CF8,#A78BFA)' }} aria-hidden="true" />
-                                <Upload className="w-4 h-4 relative z-10 group-hover:scale-110 transition-transform" />
-                                <span className="relative z-10">Upload a Document</span>
-                                <ChevronRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" />
-                            </motion.a>
-                            <motion.a
-                                href="#features"
-                                whileHover={{ y: -3, scale: 1.03 }}
-                                whileTap={{ scale: 0.97 }}
-                                transition={{ type: 'spring', stiffness: 360, damping: 22 }}
-                                className="group inline-flex items-center gap-2 rounded-2xl text-sm font-semibold border border-[var(--border)] bg-[var(--bg-card)]"
-                                style={{
-                                    padding: '0.875rem 1.625rem', color: 'var(--text-secondary)'
-                                }}>
-                                See how it works
-                                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                            </motion.a>
-                        </motion.div>
-
-                        {/* Stats */}
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.52 }}
-                            className="flex gap-8 pt-6 mt-2 border-t border-[var(--border)]">
-                            {STATS.map(s => (
-                                <div key={s.label} className="flex flex-col gap-1">
-                                    <span className="text-2xl font-black" style={{
-                                        background: 'linear-gradient(135deg,#818CF8,#22D3EE)',
-                                        WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'
-                                    }}>{s.value}</span>
-                                    <span className="text-[11px] font-medium uppercase tracking-wide"
-                                        style={{ color: 'var(--text-muted)' }}>{s.label}</span>
-                                </div>
-                            ))}
-                        </motion.div>
-                    </div>
-
-                    {/* ── Preview ── */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 32, scale: 0.96 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        transition={{ duration: 0.8, delay: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
-                        className="hidden lg:block float-anim"
-                        style={{ animationDuration: '8s' }}
-                        aria-label="NeuroDocs product preview">
-                        <ProductPreview />
-                    </motion.div>
-
+        <motion.div
+          initial={{ opacity: 0, y: 22 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, delay: 0.1 }}
+          className="relative"
+        >
+          <div className="overflow-hidden rounded-lg border border-[var(--border-strong)] bg-[var(--surface)] shadow-2xl shadow-slate-200/70">
+            <div className="flex items-center justify-between border-b border-[var(--border)] bg-slate-50 px-4 py-3">
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-md bg-blue-600 text-white">
+                  <FileText className="h-4 w-4" />
                 </div>
+                <div>
+                  <div className="text-sm font-semibold text-slate-900">Operations queue</div>
+                  <div className="text-xs text-slate-500">Live extraction review</div>
+                </div>
+              </div>
+              <div className="hidden items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 sm:flex">
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                API healthy
+              </div>
             </div>
 
-            <div className="absolute bottom-0 inset-x-0 h-40 pointer-events-none"
-                style={{ background: 'linear-gradient(to top,var(--bg) 0%,transparent 100%)' }} />
-        </section>
-    );
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_18rem]">
+              <div className="min-w-0">
+                <div className="grid grid-cols-[1.1fr_0.8fr_0.7fr_0.7fr] border-b border-[var(--border)] px-5 py-2.5 text-xs font-medium uppercase text-slate-500">
+                  <span>Document</span>
+                  <span>Owner</span>
+                  <span>Value</span>
+                  <span className="text-right">Status</span>
+                </div>
+                <div className="divide-y divide-[var(--border)]">
+                  {rows.map((row) => (
+                    <div key={row.id} className="grid grid-cols-[1.1fr_0.8fr_0.7fr_0.7fr] items-center px-5 py-4 text-sm">
+                      <div className="min-w-0">
+                        <div className="truncate font-semibold text-slate-950">{row.id}</div>
+                        <div className="truncate text-xs text-slate-500">{row.type}</div>
+                      </div>
+                      <div className="truncate text-slate-600">{row.owner}</div>
+                      <div className="truncate font-medium text-slate-800">{row.value}</div>
+                      <div className="text-right">
+                        <StatusPill status={row.status} tone={row.tone} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="border-t border-[var(--border)] bg-slate-950 p-5 text-white lg:border-l lg:border-t-0">
+                <div className="flex items-center justify-between">
+                  <div className="text-sm font-semibold">Extraction details</div>
+                  <ShieldCheck className="h-4 w-4 text-emerald-300" />
+                </div>
+                <div className="mt-5 space-y-4">
+                  <div>
+                    <div className="flex justify-between text-xs text-slate-400">
+                      <span>Vendor</span>
+                      <span>98%</span>
+                    </div>
+                    <div className="mt-1 rounded bg-slate-900 px-3 py-2 text-sm">Northstar Supply Co.</div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-xs text-slate-400">
+                      <span>Tax ID</span>
+                      <span>96%</span>
+                    </div>
+                    <div className="mt-1 rounded bg-slate-900 px-3 py-2 text-sm">US-47-8120039</div>
+                  </div>
+                  <div className="rounded-md border border-amber-400/30 bg-amber-400/10 p-3">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-amber-200">
+                      <TriangleAlert className="h-3.5 w-3.5" />
+                      Needs review
+                    </div>
+                    <p className="mt-1 text-xs leading-5 text-amber-100/80">Line item total differs from invoice total by $12.00.</p>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-slate-400">
+                    <Clock3 className="h-3.5 w-3.5" />
+                    Synced to ERP 2 minutes ago
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
 }

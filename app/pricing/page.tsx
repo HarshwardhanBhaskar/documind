@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function PricingPage() {
     return (
-        <main className="min-h-screen bg-black text-white w-full overflow-x-hidden relative">
+        <main className="min-h-screen bg-[var(--bg)] text-[var(--text-primary)] w-full overflow-x-hidden relative">
             {/* Global ambient lighting */}
             <div className="fixed inset-0 pointer-events-none z-0" aria-hidden="true">
                 <div

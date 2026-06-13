@@ -200,7 +200,7 @@ export default function ToolModal({ isOpen, onClose, tool, title, description }:
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
                     />
 
                     {/* Modal */}
@@ -210,25 +210,34 @@ export default function ToolModal({ isOpen, onClose, tool, title, description }:
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
                         className="relative w-full max-w-lg overflow-hidden rounded-2xl p-6 shadow-2xl"
                         style={{
-                            background: 'rgba(15,23,42,0.95)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
+                            background: 'var(--surface)',
+                            border: '1px solid var(--border)',
+                            boxShadow: '0 25px 50px -12px var(--dashboard-shadow)',
                         }}
                     >
                         <button
                             onClick={onClose}
-                            className="absolute right-4 top-4 rounded-full p-2 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+                            className="absolute right-4 top-4 rounded-full p-2 transition-colors cursor-pointer"
+                            style={{ color: 'var(--text-secondary)' }}
+                            onMouseEnter={e => {
+                                e.currentTarget.style.background = 'var(--surface-muted)';
+                                e.currentTarget.style.color = 'var(--text-primary)';
+                            }}
+                            onMouseLeave={e => {
+                                e.currentTarget.style.background = 'transparent';
+                                e.currentTarget.style.color = 'var(--text-secondary)';
+                            }}
                         >
                             <X className="w-5 h-5" />
                         </button>
 
                         <div className="mb-6">
-                            <h2 className="text-2xl font-bold text-white mb-2">{title}</h2>
-                            <p className="text-slate-400 text-sm">{description}</p>
+                            <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>{title}</h2>
+                            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{description}</p>
                         </div>
 
                         {error && (
-                            <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+                            <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-600 text-sm">
                                 {error}
                             </div>
                         )}
@@ -238,7 +247,7 @@ export default function ToolModal({ isOpen, onClose, tool, title, description }:
                                 <div
                                     onDragOver={e => e.preventDefault()}
                                     onDrop={handleDrop}
-                                    className="border-2 border-dashed border-slate-700/50 rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-slate-800/20 transition-colors group mb-4"
+                                    className="border-2 border-dashed border-[var(--border)] rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-indigo-50/20 transition-colors group mb-4"
                                     onClick={() => fileInputRef.current?.click()}
                                 >
                                     <input
@@ -249,11 +258,11 @@ export default function ToolModal({ isOpen, onClose, tool, title, description }:
                                         ref={fileInputRef}
                                         onChange={handleFileSelect}
                                     />
-                                    <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                        <UploadCloud className="w-6 h-6 text-indigo-400" />
+                                    <div className="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                        <UploadCloud className="w-6 h-6 text-indigo-500" />
                                     </div>
-                                    <p className="text-slate-300 font-medium mb-1">Click to browse or drag & drop</p>
-                                    <p className="text-slate-500 text-xs">
+                                    <p className="font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Click to browse or drag & drop</p>
+                                    <p className="text-xs font-normal" style={{ color: 'var(--text-secondary)' }}>
                                         {tool === 'merge'
                                             ? 'Select multiple PDFs'
                                             : tool === 'compress'
@@ -265,7 +274,7 @@ export default function ToolModal({ isOpen, onClose, tool, title, description }:
                                 </div>
 
                                 {isAiTool && !isAuth && (
-                                    <p className="text-xs text-amber-400 mb-4">
+                                    <p className="text-xs text-amber-600 mb-4 font-semibold">
                                         Sign in is required for AI tools.
                                     </p>
                                 )}
@@ -273,12 +282,12 @@ export default function ToolModal({ isOpen, onClose, tool, title, description }:
                                 {files.length > 0 && (
                                     <div className="max-h-32 overflow-y-auto mb-6 pr-2">
                                         {files.map((file, i) => (
-                                            <div key={i} className="flex flex-row items-center justify-between p-2 rounded-lg bg-slate-800/30 border border-slate-700/30 mb-2">
+                                            <div key={i} className="flex flex-row items-center justify-between p-2 rounded-lg bg-[var(--bg-card)] border border-[var(--border)] mb-2">
                                                 <div className="flex flex-row items-center gap-2 overflow-hidden">
-                                                    <File className="w-4 h-4 text-slate-400 flex-shrink-0" />
-                                                    <span className="text-sm text-slate-300 truncate">{file.name}</span>
+                                                    <File className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                                                    <span className="text-sm truncate font-medium" style={{ color: 'var(--text-primary)' }}>{file.name}</span>
                                                 </div>
-                                                <button onClick={() => removeFile(i)} className="text-slate-500 hover:text-red-400 transition-colors p-1 rounded">
+                                                <button onClick={() => removeFile(i)} className="text-slate-500 hover:text-red-500 transition-colors p-1 rounded cursor-pointer">
                                                     <X className="w-3.5 h-3.5" />
                                                 </button>
                                             </div>
@@ -289,11 +298,21 @@ export default function ToolModal({ isOpen, onClose, tool, title, description }:
                                 <button
                                     onClick={runTool}
                                     disabled={files.length === 0 || isProcessing}
-                                    className="w-full flex items-center justify-center py-2.5 rounded-lg font-medium transition-all"
+                                    className="w-full flex items-center justify-center py-2.5 rounded-lg font-medium transition-all cursor-pointer"
                                     style={{
-                                        background: files.length > 0 && !isProcessing ? 'linear-gradient(to right, #6366F1, #8B5CF6)' : '#334155',
-                                        color: files.length > 0 && !isProcessing ? 'white' : '#94A3B8',
+                                        background: files.length > 0 && !isProcessing ? 'var(--accent)' : 'var(--border)',
+                                        color: files.length > 0 && !isProcessing ? 'white' : 'var(--text-muted)',
                                         opacity: isProcessing ? 0.7 : 1,
+                                    }}
+                                    onMouseEnter={e => {
+                                        if (files.length > 0 && !isProcessing) {
+                                            e.currentTarget.style.background = 'var(--accent-strong)';
+                                        }
+                                    }}
+                                    onMouseLeave={e => {
+                                        if (files.length > 0 && !isProcessing) {
+                                            e.currentTarget.style.background = 'var(--accent)';
+                                        }
                                     }}
                                 >
                                     {isProcessing ? (
@@ -308,13 +327,14 @@ export default function ToolModal({ isOpen, onClose, tool, title, description }:
                             </>
                         ) : (
                             <div className="flex flex-col items-center justify-center py-8">
-                                <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mb-6">
-                                    <File className="w-8 h-8 text-green-400" />
+                                <div className="w-16 h-16 rounded-full flex items-center justify-center mb-6 border shadow-sm"
+                                     style={{ background: 'rgba(16, 185, 129, 0.12)', borderColor: 'rgba(16, 185, 129, 0.24)' }}>
+                                    <File className="w-8 h-8" style={{ color: 'var(--emerald)' }} />
                                 </div>
-                                <h3 className="text-xl font-bold text-white mb-2">Success!</h3>
-                                <p className="text-slate-400 text-center mb-8">Your files have been processed successfully.</p>
+                                <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Success!</h3>
+                                <p className="text-center mb-8 text-sm" style={{ color: 'var(--text-secondary)' }}>Your files have been processed successfully.</p>
                                 {resultPreview && (
-                                    <pre className="w-full mb-6 max-h-40 overflow-auto p-3 rounded-lg bg-slate-900/70 border border-slate-700/40 text-xs text-slate-300 whitespace-pre-wrap">
+                                    <pre className="w-full mb-6 max-h-40 overflow-auto p-3 rounded-lg border border-[var(--border)] text-xs whitespace-pre-wrap font-mono" style={{ background: 'rgba(94, 80, 70, 0.02)', color: 'var(--text-primary)' }}>
                                         {resultPreview}
                                     </pre>
                                 )}
@@ -322,13 +342,24 @@ export default function ToolModal({ isOpen, onClose, tool, title, description }:
                                 <div className="flex flex-row gap-3 w-full">
                                     <button
                                         onClick={reset}
-                                        className="flex-1 py-2.5 rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors font-medium"
+                                        className="flex-1 py-2.5 rounded-lg border border-[var(--border)] hover:bg-[var(--surface-muted)] transition-colors font-semibold text-sm cursor-pointer"
+                                        style={{ color: 'var(--text-secondary)' }}
                                     >
                                         Do Another
                                     </button>
                                     <button
                                         onClick={downloadResult}
-                                        className="flex-1 flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 text-white py-2.5 rounded-lg transition-colors font-medium shadow-lg shadow-indigo-500/20"
+                                        className="flex-1 flex items-center justify-center text-white py-2.5 rounded-lg transition-colors font-semibold text-sm shadow-lg cursor-pointer"
+                                        style={{
+                                            background: 'var(--accent)',
+                                            boxShadow: '0 4px 12px rgba(37, 99, 235, 0.15)'
+                                        }}
+                                        onMouseEnter={e => {
+                                            e.currentTarget.style.background = 'var(--accent-strong)';
+                                        }}
+                                        onMouseLeave={e => {
+                                            e.currentTarget.style.background = 'var(--accent)';
+                                        }}
                                     >
                                         <Download className="w-4 h-4 mr-2" />
                                         Download

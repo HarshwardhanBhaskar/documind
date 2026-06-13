@@ -7,18 +7,17 @@ import { Home, ArrowLeft } from 'lucide-react';
 export default function NotFound() {
     return (
         <section
-            className="relative min-h-screen flex items-center justify-center overflow-hidden"
-            style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(99,102,241,0.12) 0%, #080c14 60%)' }}
+            className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[var(--bg)]"
         >
             {/* Ambient glow blobs */}
             <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
                 <div
                     className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full"
-                    style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)' }}
+                    style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 70%)' }}
                 />
                 <div
                     className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full"
-                    style={{ background: 'radial-gradient(circle, rgba(167,139,250,0.06) 0%, transparent 70%)' }}
+                    style={{ background: 'radial-gradient(circle, rgba(167,139,250,0.04) 0%, transparent 70%)' }}
                 />
             </div>
 
@@ -40,7 +39,7 @@ export default function NotFound() {
                     {/* Dark overlay to blend with site theme */}
                     <div
                         className="absolute inset-0 rounded-2xl"
-                        style={{ background: 'linear-gradient(to bottom, rgba(8,12,20,0.1) 0%, rgba(8,12,20,0.55) 100%)' }}
+                        style={{ background: 'linear-gradient(to bottom, rgba(250,249,245,0.15) 0%, rgba(250,249,245,0.6) 100%)' }}
                     />
                 </motion.div>
 
@@ -56,10 +55,10 @@ export default function NotFound() {
                     >
                         404
                     </h1>
-                    <h2 className="text-2xl font-bold text-white mb-3">
+                    <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-3">
                         Look like you&apos;re lost
                     </h2>
-                    <p className="text-slate-400 text-base mb-8 leading-relaxed">
+                    <p className="text-[var(--text-secondary)] text-base mb-8 leading-relaxed">
                         The page you are looking for is not available!<br />
                         It might have been moved, deleted, or never existed.
                     </p>
@@ -86,8 +85,7 @@ export default function NotFound() {
 
                     <button
                         onClick={() => window.history.back()}
-                        className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-slate-300 font-semibold transition-all duration-200 hover:bg-slate-800 hover:text-white"
-                        style={{ border: '1px solid rgba(255,255,255,0.1)' }}
+                        className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 bg-[var(--bg-card)] border border-[var(--border)] hover:bg-slate-50 text-[var(--text-primary)] shadow-xs"
                     >
                         <ArrowLeft className="w-4 h-4" />
                         Go Back
@@ -99,7 +97,7 @@ export default function NotFound() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.5, delay: 0.6 }}
-                    className="mt-12 text-xs text-slate-600"
+                    className="mt-12 text-xs text-[var(--text-muted)]"
                 >
                     © NeuroDocs — Intelligent Document AI
                 </motion.p>

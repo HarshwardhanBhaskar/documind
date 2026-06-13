@@ -229,22 +229,22 @@ export default function DashboardPage() {
 
     if (authLoading || !isAuth) {
         return (
-            <main className="min-h-screen bg-black flex items-center justify-center">
+            <main className="min-h-screen bg-[var(--bg)] flex items-center justify-center">
                 <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
             </main>
         );
     }
 
     return (
-        <main className="min-h-screen bg-black text-white overflow-x-hidden">
+        <main className="min-h-screen bg-[var(--bg)] text-[var(--text-primary)] overflow-x-hidden">
             <Navbar />
 
             <div className="pt-32 pb-20 px-6 max-w-7xl mx-auto">
                 <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
                     <div>
-                        <p className="text-xs uppercase tracking-[0.25em] text-indigo-300/70 mb-3">Finance Workflow</p>
+                        <p className="text-xs uppercase tracking-[0.25em] mb-3 font-semibold" style={{ color: 'var(--indigo)' }}>Finance Workflow</p>
                         <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Invoice Review Queue</h1>
-                        <p className="text-slate-400 mt-3 max-w-2xl">
+                        <p className="mt-3 max-w-2xl text-sm" style={{ color: 'var(--text-secondary)' }}>
                             Review extracted invoice fields, resolve duplicate warnings, approve clean records, and export them for accounting.
                         </p>
                     </div>
@@ -253,20 +253,21 @@ export default function DashboardPage() {
                         <button
                             onClick={() => handleExport('csv')}
                             disabled={exporting !== null}
-                            className="px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition text-sm font-medium disabled:opacity-60"
+                            className="px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] hover:bg-slate-50 transition text-sm font-semibold disabled:opacity-60 cursor-pointer"
                         >
                             {exporting === 'csv' ? 'Exporting CSV...' : 'Export Approved CSV'}
                         </button>
                         <button
                             onClick={() => handleExport('json')}
                             disabled={exporting !== null}
-                            className="px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition text-sm font-medium disabled:opacity-60"
+                            className="px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] hover:bg-slate-50 transition text-sm font-semibold disabled:opacity-60 cursor-pointer"
                         >
                             {exporting === 'json' ? 'Exporting JSON...' : 'Export Approved JSON'}
                         </button>
                         <button
                             onClick={handleLogout}
-                            className="px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition text-sm font-medium text-slate-300 inline-flex items-center gap-2"
+                            className="px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] hover:bg-slate-50 transition text-sm font-semibold inline-flex items-center gap-2 cursor-pointer"
+                            style={{ color: 'var(--text-secondary)' }}
                         >
                             <LogOut className="w-4 h-4" />
                             Sign Out
@@ -281,9 +282,9 @@ export default function DashboardPage() {
                         { label: 'Approved', value: stats.approved },
                         { label: 'Duplicates', value: stats.duplicates },
                     ].map((item) => (
-                        <div key={item.label} className="p-5 rounded-2xl border border-white/10 bg-white/5 backdrop-blur">
-                            <p className="text-sm text-slate-400">{item.label}</p>
-                            <p className="text-3xl font-semibold mt-2">{item.value}</p>
+                        <div key={item.label} className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] backdrop-blur shadow-sm">
+                            <p className="text-xs uppercase tracking-wider font-semibold" style={{ color: 'var(--text-secondary)' }}>{item.label}</p>
+                            <p className="text-3xl font-bold mt-2" style={{ color: 'var(--text-primary)' }}>{item.value}</p>
                         </div>
                     ))}
                 </div>
@@ -291,43 +292,43 @@ export default function DashboardPage() {
                 {(error || notice) && (
                     <div className="space-y-3 mb-6">
                         {error && (
-                            <div className="p-4 rounded-xl border border-red-500/20 bg-red-500/10 text-red-300 flex items-center gap-3">
+                            <div className="p-4 rounded-xl border border-red-500/20 bg-red-500/10 text-red-700 flex items-center gap-3">
                                 <AlertCircle className="w-5 h-5 shrink-0" />
-                                <span>{error}</span>
+                                <span className="text-sm font-medium">{error}</span>
                             </div>
                         )}
                         {notice && (
-                            <div className="p-4 rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-300 flex items-center gap-3">
+                            <div className="p-4 rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-700 flex items-center gap-3">
                                 <CheckCircle2 className="w-5 h-5 shrink-0" />
-                                <span>{notice}</span>
+                                <span className="text-sm font-medium">{notice}</span>
                             </div>
                         )}
                     </div>
                 )}
 
                 {loadingDocs ? (
-                    <div className="flex items-center justify-center py-20 rounded-3xl border border-white/10 bg-white/5">
+                    <div className="flex items-center justify-center py-20 rounded-3xl border border-[var(--border)] bg-[var(--bg-card)]">
                         <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
                     </div>
                 ) : !stats.total ? (
-                    <div className="text-center py-20 rounded-3xl border border-dashed border-white/10 bg-white/5">
-                        <FileSpreadsheet className="w-10 h-10 mx-auto text-slate-500 mb-4" />
-                        <h2 className="text-xl font-semibold mb-2">No invoices in the queue yet</h2>
-                        <p className="text-slate-400 max-w-xl mx-auto">
+                    <div className="text-center py-20 rounded-3xl border border-dashed border-[var(--border)] bg-[var(--bg-card)]">
+                        <FileSpreadsheet className="w-10 h-10 mx-auto text-slate-400 mb-4" />
+                        <h2 className="text-xl font-bold mb-2">No invoices in the queue yet</h2>
+                        <p className="max-w-xl mx-auto text-sm" style={{ color: 'var(--text-secondary)' }}>
                             Upload invoice PDFs or images from the main tools page. Once the AI pipeline classifies them as invoices, they will appear here for finance review.
                         </p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 xl:grid-cols-[360px_minmax(0,1fr)] gap-6">
-                        <section className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur overflow-hidden">
-                            <div className="p-5 border-b border-white/10">
-                                <div className="flex items-center gap-3 rounded-xl bg-black/20 border border-white/10 px-3 py-2">
-                                    <Search className="w-4 h-4 text-slate-500" />
+                        <section className="rounded-3xl border border-[var(--border)] bg-[var(--bg-card)] backdrop-blur overflow-hidden shadow-sm">
+                            <div className="p-5 border-b border-[var(--border)]">
+                                <div className="flex items-center gap-3 rounded-xl bg-white border border-[var(--border)] px-3 py-2 shadow-xs">
+                                    <Search className="w-4 h-4 text-slate-400" />
                                     <input
                                         value={search}
                                         onChange={(event) => setSearch(event.target.value)}
                                         placeholder="Search invoices..."
-                                        className="w-full bg-transparent outline-none text-sm text-white placeholder:text-slate-500"
+                                        className="w-full bg-transparent outline-none text-sm text-[var(--text-primary)] placeholder:text-slate-400"
                                     />
                                 </div>
                             </div>
@@ -339,25 +340,25 @@ export default function DashboardPage() {
                                         <button
                                             key={doc.id}
                                             onClick={() => setSelectedId(doc.id)}
-                                            className={`w-full text-left p-4 rounded-2xl border transition ${
+                                            className={`w-full text-left p-4 rounded-2xl border transition cursor-pointer ${
                                                 active
-                                                    ? 'border-indigo-400/60 bg-indigo-500/10'
-                                                    : 'border-white/10 bg-black/10 hover:border-white/20'
+                                                    ? 'border-indigo-500/40 bg-indigo-50/50 shadow-xs'
+                                                    : 'border-[var(--border)] bg-[var(--bg)] hover:border-indigo-200'
                                             }`}
                                         >
                                             <div className="flex items-start justify-between gap-4">
                                                 <div className="min-w-0">
-                                                    <p className="font-medium truncate">{doc.filename}</p>
-                                                    <p className="text-xs text-slate-400 mt-1">
+                                                    <p className="font-semibold text-sm truncate" style={{ color: active ? 'var(--indigo)' : 'var(--text-primary)' }}>{doc.filename}</p>
+                                                    <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
                                                         {new Date(doc.upload_time).toLocaleDateString()} • {doc.review_status.replace('_', ' ')}
                                                     </p>
                                                 </div>
                                                 {doc.duplicate_detected && (
-                                                    <span className="text-[10px] uppercase tracking-wider text-amber-300">Dup</span>
+                                                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md">Dup</span>
                                                 )}
                                             </div>
                                             {doc.invoice_issue_flags.length > 0 && (
-                                                <p className="text-xs text-amber-300 mt-3">
+                                                <p className="text-xs text-amber-600 mt-3 font-semibold">
                                                     {doc.invoice_issue_flags.length} review flag{doc.invoice_issue_flags.length > 1 ? 's' : ''}
                                                 </p>
                                             )}
@@ -367,7 +368,7 @@ export default function DashboardPage() {
                             </div>
                         </section>
 
-                        <section className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur p-6">
+                        <section className="rounded-3xl border border-[var(--border)] bg-[var(--bg-card)] backdrop-blur p-6 shadow-sm">
                             {loadingDetail || !selectedDoc ? (
                                 <div className="flex items-center justify-center min-h-[420px]">
                                     <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
@@ -376,8 +377,8 @@ export default function DashboardPage() {
                                 <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
                                     <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4 mb-6">
                                         <div>
-                                            <h2 className="text-2xl font-semibold">{selectedDoc.filename}</h2>
-                                            <p className="text-slate-400 mt-2">
+                                            <h2 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{selectedDoc.filename}</h2>
+                                            <p className="text-sm mt-2" style={{ color: 'var(--text-secondary)' }}>
                                                 Classified as {selectedDoc.classified_type ?? 'Unknown'} • Uploaded on{' '}
                                                 {new Date(selectedDoc.upload_time).toLocaleString()}
                                             </p>
@@ -385,7 +386,8 @@ export default function DashboardPage() {
 
                                         <button
                                             onClick={() => setDetailReloadKey((current) => current + 1)}
-                                            className="px-3 py-2 rounded-xl border border-white/10 bg-black/10 text-sm inline-flex items-center gap-2"
+                                            className="px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg)] hover:bg-slate-50 text-sm inline-flex items-center gap-2 cursor-pointer font-semibold"
+                                            style={{ color: 'var(--text-secondary)' }}
                                         >
                                             <RefreshCw className="w-4 h-4" />
                                             Refresh
@@ -393,17 +395,17 @@ export default function DashboardPage() {
                                     </div>
 
                                     {selectedDoc.duplicate_detected && (
-                                        <div className="mb-5 p-4 rounded-2xl border border-amber-500/20 bg-amber-500/10 text-amber-200">
+                                        <div className="mb-5 p-4 rounded-2xl border border-amber-500/20 bg-amber-50/50 text-amber-700 text-sm font-medium">
                                             Possible duplicate invoice detected. Check vendor, invoice number, and amount before approval.
                                         </div>
                                     )}
 
                                     {selectedDoc.invoice_issue_flags.length > 0 && (
-                                        <div className="mb-6 p-4 rounded-2xl border border-white/10 bg-black/20">
-                                            <p className="text-sm font-medium mb-3">Review flags</p>
+                                        <div className="mb-6 p-4 rounded-2xl border border-[var(--border)] bg-[var(--bg)]">
+                                            <p className="text-sm font-semibold mb-3">Review flags</p>
                                             <div className="flex flex-wrap gap-2">
                                                 {selectedDoc.invoice_issue_flags.map((flag) => (
-                                                    <span key={flag} className="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-300 text-xs">
+                                                    <span key={flag} className="px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-600 text-xs font-semibold">
                                                         {flag.replaceAll('_', ' ')}
                                                     </span>
                                                 ))}
@@ -414,11 +416,11 @@ export default function DashboardPage() {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                                         {INVOICE_FIELDS.map((field) => (
                                             <label key={field.key} className="block">
-                                                <span className="text-xs uppercase tracking-[0.2em] text-slate-500">{field.label}</span>
+                                                <span className="text-xs font-bold uppercase tracking-[0.2em]" style={{ color: 'var(--text-muted)' }}>{field.label}</span>
                                                 <input
                                                     value={reviewFields[field.key] ?? ''}
                                                     onChange={(event) => handleFieldChange(field.key, event.target.value)}
-                                                    className="mt-2 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm outline-none focus:border-indigo-400/50"
+                                                    className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--bg)] px-4 py-3 text-sm outline-none focus:border-indigo-500/50 text-[var(--text-primary)] font-medium"
                                                 />
                                             </label>
                                         ))}
@@ -426,11 +428,11 @@ export default function DashboardPage() {
 
                                     <div className="grid grid-cols-1 md:grid-cols-[220px_minmax(0,1fr)] gap-4 mb-6">
                                         <label className="block">
-                                            <span className="text-xs uppercase tracking-[0.2em] text-slate-500">Review Status</span>
+                                            <span className="text-xs font-bold uppercase tracking-[0.2em]" style={{ color: 'var(--text-muted)' }}>Review Status</span>
                                             <select
                                                 value={reviewStatus}
                                                 onChange={(event) => setReviewStatus(event.target.value as ReviewStatus)}
-                                                className="mt-2 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm outline-none focus:border-indigo-400/50"
+                                                className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--bg)] px-4 py-3 text-sm outline-none focus:border-indigo-500/50 text-[var(--text-primary)] font-semibold cursor-pointer"
                                             >
                                                 <option value="new">New</option>
                                                 <option value="needs_review">Needs Review</option>
@@ -440,12 +442,12 @@ export default function DashboardPage() {
                                         </label>
 
                                         <label className="block">
-                                            <span className="text-xs uppercase tracking-[0.2em] text-slate-500">Review Notes</span>
+                                            <span className="text-xs font-bold uppercase tracking-[0.2em]" style={{ color: 'var(--text-muted)' }}>Review Notes</span>
                                             <textarea
                                                 value={reviewNotes}
                                                 onChange={(event) => setReviewNotes(event.target.value)}
                                                 rows={4}
-                                                className="mt-2 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm outline-none focus:border-indigo-400/50 resize-none"
+                                                className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--bg)] px-4 py-3 text-sm outline-none focus:border-indigo-500/50 resize-none text-[var(--text-primary)]"
                                                 placeholder="Add finance review notes or approval context..."
                                             />
                                         </label>
@@ -455,14 +457,15 @@ export default function DashboardPage() {
                                         <button
                                             onClick={handleSaveReview}
                                             disabled={saving}
-                                            className="px-5 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition font-medium disabled:opacity-60"
+                                            className="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white transition font-semibold text-sm shadow-lg shadow-indigo-600/10 cursor-pointer"
                                         >
                                             {saving ? 'Saving Review...' : 'Save Review'}
                                         </button>
                                         <button
                                             onClick={() => handleExport('csv')}
                                             disabled={exporting !== null}
-                                            className="px-5 py-3 rounded-xl border border-white/10 bg-black/20 hover:bg-black/30 transition font-medium inline-flex items-center gap-2 disabled:opacity-60"
+                                            className="px-5 py-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] hover:bg-slate-50 transition font-semibold text-sm inline-flex items-center gap-2 disabled:opacity-60 cursor-pointer"
+                                            style={{ color: 'var(--text-secondary)' }}
                                         >
                                             <Download className="w-4 h-4" />
                                             Export Approved CSV
