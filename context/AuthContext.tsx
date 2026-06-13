@@ -103,25 +103,55 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         async function restoreSession() {
             try {
-                const raw = localStorage.getItem(STORAGE_KEY);
-                if (!raw) return;
+                let stored: StoredAuth | null = null;
+                const hash = typeof window !== 'undefined' ? window.location.hash : '';
+                
+                // Check if we have been redirected with a Supabase email token hash
+                if (hash && hash.includes('access_token=')) {
+                    const params = new URLSearchParams(hash.replace(/^#/, ''));
+                    const access_token = params.get('access_token');
+                    const refresh_token = params.get('refresh_token');
+                    const expires_in = Number(params.get('expires_in') ?? '3600');
+                    
+                    if (access_token) {
+                        // Clear hash from address bar cleanly
+                        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+                        
+                        // Retrieve profile using the token
+                        const remoteUser = await authApi.getUser(access_token);
+                        stored = {
+                            access_token,
+                            refresh_token,
+                            expires_in,
+                            user_id: remoteUser.id,
+                            email: remoteUser.email,
+                            full_name: remoteUser.full_name,
+                        };
+                        applyAuth(stored);
+                    }
+                }
 
-                const stored = JSON.parse(raw) as StoredAuth;
-                if (!stored.access_token) return;
+                if (!stored) {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (!raw) return;
 
-                setSession(toSession(stored));
-                setUser(toUser(stored));
+                    const parsed = JSON.parse(raw) as StoredAuth;
+                    if (!parsed.access_token) return;
 
-                const remoteUser = await authApi.getUser(stored.access_token);
-                if (cancelled) return;
+                    setSession(toSession(parsed));
+                    setUser(toUser(parsed));
 
-                const refreshed: StoredAuth = {
-                    ...stored,
-                    user_id: remoteUser.id,
-                    email: remoteUser.email,
-                    full_name: remoteUser.full_name,
-                };
-                applyAuth(refreshed);
+                    const remoteUser = await authApi.getUser(parsed.access_token);
+                    if (cancelled) return;
+
+                    const refreshed: StoredAuth = {
+                        ...parsed,
+                        user_id: remoteUser.id,
+                        email: remoteUser.email,
+                        full_name: remoteUser.full_name,
+                    };
+                    applyAuth(refreshed);
+                }
             } catch {
                 if (!cancelled) clearAuth();
             } finally {
