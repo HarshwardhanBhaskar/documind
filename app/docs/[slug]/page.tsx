@@ -37,7 +37,7 @@ const docs: Record<string, DocContent> = {
     title: 'Getting Started',
     strapline: 'Launch your first complete document flow in minutes.',
     description: 'Set up NeuroDocs locally and run your first document processing flow.',
-    updated: 'March 12, 2026',
+    updated: 'June 13, 2026',
     sections: [
       {
         title: 'Environment Setup',
@@ -75,7 +75,7 @@ const docs: Record<string, DocContent> = {
     title: 'API Reference',
     strapline: 'Production-oriented endpoints for document lifecycle operations.',
     description: 'REST endpoints for uploads, processing jobs, status checks, and export data.',
-    updated: 'March 12, 2026',
+    updated: 'June 13, 2026',
     sections: [
       {
         title: 'Authentication and Access',
@@ -114,7 +114,7 @@ const docs: Record<string, DocContent> = {
     title: 'Guides',
     strapline: 'Hands-on implementation patterns for real workflows.',
     description: 'Practical implementation walkthroughs for common product workflows.',
-    updated: 'March 12, 2026',
+    updated: 'June 13, 2026',
     sections: [
       {
         title: 'Domain-first Pipeline Design',
@@ -148,7 +148,7 @@ const docs: Record<string, DocContent> = {
     title: 'Integrations',
     strapline: 'Connect NeuroDocs with your existing stack.',
     description: 'Connect NeuroDocs with storage, messaging, and business automation tools.',
-    updated: 'March 12, 2026',
+    updated: 'June 13, 2026',
     sections: [
       {
         title: 'Storage and Auth',
@@ -182,7 +182,7 @@ const docs: Record<string, DocContent> = {
     title: 'SDKs',
     strapline: 'Ship integrations faster with shared clients and models.',
     description: 'Client libraries and helper modules for faster integration.',
-    updated: 'March 12, 2026',
+    updated: 'June 13, 2026',
     sections: [
       {
         title: 'SDK Design Goals',

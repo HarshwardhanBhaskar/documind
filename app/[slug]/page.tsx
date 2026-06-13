@@ -28,7 +28,7 @@ const pages: Record<string, PageContent> = {
     title: 'About',
     strapline: 'A Product Team Built Around Reliability',
     description: 'Learn what NeuroDocs is building and why it exists.',
-    updated: 'March 12, 2026',
+    updated: 'June 13, 2026',
     highlights: ['Mission first', 'Enterprise ready', 'API driven'],
     sections: [
       {
@@ -53,7 +53,7 @@ const pages: Record<string, PageContent> = {
     title: 'Privacy Policy',
     strapline: 'Your Data Remains Your Data',
     description: 'How NeuroDocs handles, stores, and protects personal data.',
-    updated: 'March 14, 2024',
+    updated: 'June 13, 2026',
     highlights: ['Data minimization', 'Encrypted transport', 'Retention controls'],
     sections: [
       {
@@ -88,7 +88,7 @@ const pages: Record<string, PageContent> = {
     title: 'Terms of Service',
     strapline: 'Clear Usage Terms For Every Workspace',
     description: 'The agreement governing use of NeuroDocs services.',
-    updated: 'March 14, 2024',
+    updated: 'June 13, 2026',
     highlights: ['Usage rules', 'Plan limits', 'Liability framework'],
     sections: [
       {
@@ -123,7 +123,7 @@ const pages: Record<string, PageContent> = {
     title: 'Cookie Policy',
     strapline: 'Transparent Preferences And Tracking Controls',
     description: 'How cookies and similar technologies are used by NeuroDocs.',
-    updated: 'March 12, 2026',
+    updated: 'June 13, 2026',
     highlights: ['Session security', 'Analytics clarity', 'Browser controls'],
     sections: [
       {
@@ -148,7 +148,7 @@ const pages: Record<string, PageContent> = {
     title: 'Changelog',
     strapline: 'Every Meaningful Product Update In One Place',
     description: 'Track product improvements and release milestones.',
-    updated: 'March 12, 2026',
+    updated: 'June 13, 2026',
     highlights: ['Release notes', 'Feature delivery', 'Fix visibility'],
     sections: [
       {
@@ -172,7 +172,7 @@ const pages: Record<string, PageContent> = {
     title: 'Roadmap',
     strapline: 'What The Team Is Shipping Next',
     description: 'Planned product direction for upcoming releases.',
-    updated: 'March 12, 2026',
+    updated: 'June 13, 2026',
     highlights: ['Domain focus', 'Platform maturity', 'Reliability roadmap'],
     sections: [
       {
@@ -196,7 +196,7 @@ const pages: Record<string, PageContent> = {
     title: 'Blog',
     strapline: 'Technical Learnings From Real Document Workflows',
     description: 'Insights, product notes, and technical deep dives from NeuroDocs.',
-    updated: 'March 12, 2026',
+    updated: 'June 13, 2026',
     highlights: ['Engineering stories', 'Use cases', 'Architecture notes'],
     sections: [
       {
@@ -220,7 +220,7 @@ const pages: Record<string, PageContent> = {
     title: 'Careers',
     strapline: 'Build With A Team That Cares About Quality',
     description: 'Join the team building reliable document intelligence.',
-    updated: 'March 12, 2026',
+    updated: 'June 13, 2026',
     highlights: ['Ownership culture', 'Fast iteration', 'Customer impact'],
     sections: [
       {
@@ -245,7 +245,7 @@ const pages: Record<string, PageContent> = {
     title: 'Security',
     strapline: 'Defense In Depth For Documents And Workspaces',
     description: 'How NeuroDocs approaches application and data security.',
-    updated: 'March 12, 2026',
+    updated: 'June 13, 2026',
     highlights: ['Least privilege', 'Incident response', 'Continuous hardening'],
     sections: [
       {
