@@ -154,7 +154,8 @@ create policy "Owner can delete own files"
     );
 
 -- 6) Helpful dashboard view
-create or replace view public.document_summaries as
+create or replace view public.document_summaries
+with (security_invoker = true) as
 select
     id,
     user_id,
